@@ -23,7 +23,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+# SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 
 def get_calendar_api():
@@ -67,6 +68,51 @@ def get_upcoming_events(api, starting_time, number_of_events):
                                       orderBy='startTime').execute()
     return events_result.get('items', [])
 
+# test insert()
+def insert_event(api, starting_date, ending_time, id):
+    """
+    Shows basic usage of the Google Calendar API.
+    Prints the start and name of the next n events on the user's calendar.
+    """
+    if (starting_date is '') or (ending_time is ''):
+        raise ValueError("Start or end time must be a string.")
+    
+    if (len(id) < 5 or len(id) > 1024):
+        raise ValueError("id must be between 5 to 1024 characters!")
+
+    attendees = []
+    eventbody = {
+                    "kind": "calendar#event",
+                    "id": id,
+                    "summary": 'test',
+                    "description": 'test add',
+                    "location": 'Monash University Malaysia',
+                    "start": {
+                        "date": starting_date
+                    },
+                    "end": {
+                        "date": ending_time
+                    },
+                    "attendees": [
+                        {
+                        "email": 'lloo0007@student.monash.edu',
+                        "organizer": 'False',
+                        }
+                    ],
+                    "guestsCanInviteOthers": 'False',
+                    "guestsCanModify": 'False',
+                    "guestsCanSeeOtherGuests": 'True',
+                    "reminders": {
+                        "useDefault": 'False',
+                        "overrides": [
+                            {'method': 'popup', 'minutes': 10}
+                        ]
+                    },
+                    "eventType": 'default'
+                }
+
+    events_result = api.events().insert(calendarId='primary', body=eventbody).execute()
+    return events_result
 
 def main():
     api = get_calendar_api()
@@ -79,6 +125,9 @@ def main():
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
+
+    newevent2 = insert_event(api,'2022-09-18','2022-09-18','42069')
+    print(newevent2.get('id'))
 
 
 if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
