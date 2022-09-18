@@ -11,6 +11,7 @@
 # students must have their own api key
 # no test cases for authentication, but authentication may required for running the app very first time.
 # http://googleapis.github.io/google-api-python-client/docs/dyn/calendar_v3.html
+# Name: Li Pin
 
 
 # Code adapted from https://developers.google.com/calendar/quickstart/python
