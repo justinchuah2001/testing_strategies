@@ -17,6 +17,7 @@
 # Code adapted from https://developers.google.com/calendar/quickstart/python
 from __future__ import print_function
 import datetime
+from multiprocessing.sharedctypes import Value
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -70,29 +71,27 @@ def get_upcoming_events(api, starting_time, number_of_events):
     return events_result.get('items', [])
 
 # test insert()
-def insert_event(api, starting_date, ending_time, id):
+def insert_event(api, starting_date, ending_date, id):
     """
     Shows basic usage of the Google Calendar API.
     Prints the start and name of the next n events on the user's calendar.
     """
-    if (starting_date is '') or (ending_time is ''):
+    if (starting_date == '') or (ending_date == ''):
         raise ValueError("Start or end time must be a string.")
     
     if (len(id) < 5 or len(id) > 1024):
         raise ValueError("id must be between 5 to 1024 characters!")
 
-    attendees = []
     eventbody = {
                     "kind": "calendar#event",
                     "id": id,
-                    "summary": 'test',
+                    "summary": 'helo?',
                     "description": 'test add',
-                    "location": 'Monash University Malaysia',
                     "start": {
                         "date": starting_date
                     },
                     "end": {
-                        "date": ending_time
+                        "date": ending_date
                     },
                     "attendees": [
                         {
@@ -115,6 +114,47 @@ def insert_event(api, starting_date, ending_time, id):
     events_result = api.events().insert(calendarId='primary', body=eventbody).execute()
     return events_result
 
+# haven't tested this cause i need someone to test for me
+def move_event(api, originalId, newId, eventId):
+    events_result = api.events().move(calendarId=originalId, eventId=eventId, destination=newId).execute()
+    return events_result
+
+# this is okay, it runs:
+# if this event has no attendee attribute (aka, no attendee at first), it creates the attribute then add people inside
+# else, just append at the back of the list
+def add_attendee(api, ownId, eventId, attendeeEmail: str):
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    newattendeee = {"email": attendeeEmail, "organiser": 'False'}
+    if hasattr(event,'attendees'):
+        event['attendees'].append(newattendeee)
+    else:
+        event['attendees'] = [newattendeee]
+    event = api.events().update(calendarId=ownId, eventId=event['id'], body=event).execute()
+    return event
+
+# this is okay, it runs:
+# if this event has attendee attribute (aka, no attendee at first), it runs a linear search to find the attendee email
+# if no email is found, raise error, else, remove 
+# else, that means no attendee attribute, so no attendees at all, so raise another error
+def remove_attendee(api, ownId, eventId, attendeeEmail: str):
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    found = 0
+    i = 0
+    if hasattr(event,'attendees'):
+        while i < len(event['attendees']):
+            if event['attendees'][i] == attendeeEmail:
+                found = i
+                break
+            i += 1
+        if found == 0:
+            raise ValueError("No email is found!")
+        event['attendees'].remove(event['attendees'][found])
+        event = api.events().update(calendarId=ownId, eventId=event['id'], body=event).execute()
+    else: 
+        raise ValueError("There are no attendees in the event!")
+    return event
+
+
 def main():
     api = get_calendar_api()
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
@@ -127,9 +167,19 @@ def main():
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
 
-    newevent2 = insert_event(api,'2022-09-18','2022-09-18','42069')
-    print(newevent2.get('id'))
-
-
+    # newevent2 = insert_event(api,'2022-09-18','2022-09-18','1234689')
+    # print(newevent2.get('id'))
+    # print(newevent2.get('attendees'))
+    # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
+    # print(newevent3)
+    newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
+    print(newevent3)
+    newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+    print(newevent3)
+    # newevent4 = add_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
+    # newevent4 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+    # print(newevent4.get('attendees'))
+    # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
+    # print(newevent5.get('attendees'))
 if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
     main()
