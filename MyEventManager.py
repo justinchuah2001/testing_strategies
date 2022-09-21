@@ -228,37 +228,37 @@ def address_check(location):
     return True
 
 
-def main():
-    # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
-    # address_check(address)
-    print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
-    api = get_calendar_api()
-    # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+# def main():
+#     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
+#     # address_check(address)
+#     print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
+#     api = get_calendar_api()
+#     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
 
-    # events = get_upcoming_events(api, time_now, 10)
+#     # events = get_upcoming_events(api, time_now, 10)
 
-    # if not events:
-    #     print('No upcoming events found.')
-    # for event in events:
-    #     start = event['start'].get('dateTime', event['start'].get('date'))
-    #     print(start, event['summary'])
+#     # if not events:
+#     #     print('No upcoming events found.')
+#     # for event in events:
+#     #     start = event['start'].get('dateTime', event['start'].get('date'))
+#     #     print(start, event['summary'])
     
 
-    newevent2 = insert_event(api,'2022-9-20T20:07:14+08:00','2022-9-20T20:07:14+08:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'realevent', '1234testings')
+#     newevent2 = insert_event(api,'2022-9-20T20:07:14+08:00','2022-9-20T20:07:14+08:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'realevent', '1234testings')
 
 
-    # delete_events(api, 'date12345')
-    # print(newevent2.get('attendees'))
-    # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
-    # print(newevent3)
-    # newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
-    # print(newevent3)
-    # newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
-    # print(newevent3)
-    # newevent4 = add_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
-    # newevent4 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
-    # print(newevent4.get('attendees'))
-    # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
-    # print(newevent5.get('attendees'))
-if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
-    main()
+#     # delete_events(api, 'date12345')
+#     # print(newevent2.get('attendees'))
+#     # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
+#     # print(newevent3)
+#     # newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
+#     # print(newevent3)
+#     # newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+#     # print(newevent3)
+#     # newevent4 = add_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
+#     # newevent4 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+#     # print(newevent4.get('attendees'))
+#     # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
+#     # print(newevent5.get('attendees'))
+# if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
+#     main()
