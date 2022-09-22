@@ -85,9 +85,6 @@ def insert_event(api, starting_date, ending_date, event_location, event_name, id
     starting_date, ending_date = ensure_date_format(starting_date, ending_date)
     address_check(event_location)
 
-
-    
-
     eventbody = {
                     "kind": "calendar#event",
                     "id": id,
@@ -226,6 +223,41 @@ def address_check(location):
     if format != 3:
         raise ValueError("Incorrect Address Format")
     return True
+
+def create_reader(api, calendarId, user_email):
+    rolebody = {
+        "role": "reader",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+
+def create_writer(api, calendarId, user_email):
+    rolebody = {
+        "role": "writer",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+
+def create_owner(api, calendarId, user_email):
+    rolebody = {
+        "role": "owner",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+    
+    
 
 
 # def main():
