@@ -12,7 +12,7 @@
 # no test cases for authentication, but authentication may required for running the app very first time.
 # http://googleapis.github.io/google-api-python-client/docs/dyn/calendar_v3.html
 # Name: Li Pin
-# Student ID: 31108555
+# Student ID: 31108555 aa
 
 
 # Code adapted from https://developers.google.com/calendar/quickstart/python
@@ -20,10 +20,11 @@ from __future__ import print_function
 import datetime
 import pickle
 import os.path
+from tracemalloc import start
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-
+from calendar import monthrange
 # If modifying these scopes, delete the file token.pickle.
 # SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -71,11 +72,13 @@ def get_upcoming_events(api, starting_time, number_of_events):
     return events_result.get('items', [])
 
 # test insert()
-def insert_event(api, starting_date, ending_date, event_location, event_name, id):
+def insert_event(api, starting_date, ending_date, start_time, end_time, event_location, event_name, id):
     """
     Shows basic usage of the Google Calendar API.
     Prints the start and name of the next n events on the user's calendar.
     """
+    # attendee
+    attendee = [1,2]
     if (starting_date == '') or (ending_date == ''):
         raise ValueError("Start or end time must be a string.")
     
@@ -83,10 +86,13 @@ def insert_event(api, starting_date, ending_date, event_location, event_name, id
         raise ValueError("id must be between 5 to 1024 characters!")
 
     starting_date, ending_date = ensure_date_format(starting_date, ending_date)
+    ensure_time_format(start_time, end_time)
+    start = starting_date + "T" + start_time + "+08:00"
+    end = ending_date + "T" + end_time + "+08:00"
     address_check(event_location)
 
-
-    
+    if len(attendee) > 20:
+        raise ValueError("There can't be more than 20 attendees")
 
     eventbody = {
                     "kind": "calendar#event",
@@ -95,10 +101,10 @@ def insert_event(api, starting_date, ending_date, event_location, event_name, id
                     "description": 'test add',
                     "location": event_location,
                     "start": {
-                        "dateTime": starting_date
+                        "dateTime": start
                     },
                     "end": {
-                        "dateTime": ending_date
+                        "dateTime": end
                     },
                     "guestsCanInviteOthers": 'False',
                     "guestsCanModify": 'False',
@@ -250,32 +256,50 @@ def delete_events(api,  Id):
         api.events().delete(calendarId='primary', eventId=Id).execute()
     return
 
-def ensure_date_format(start_date, end_date):
-    start = start_date.split("T")
-    end = end_date.split("T")
+def ensure_date_format(start_date, end_date = None):
     try:
-        start[0] != (datetime.datetime.strptime(start[0], '%Y-%b-%d'))
-        start[0] = datetime.datetime.strptime(start[0], '%Y-%b-%d').strftime('%Y-%m-%d')
+        datetime.datetime.strptime(start_date, '%Y-%b-%d')
+        start_date = datetime.datetime.strptime(start_date, '%Y-%b-%d').strftime('%Y-%m-%d')
+        
     except:
         try:
-            start[0] != datetime.datetime.strptime(start[0], '%Y-%m-%d')
-            start[0] = datetime.datetime.strptime(start[0], '%Y-%m-%d').strftime('%Y-%m-%d')
+            datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y-%m-%d')
+            
         except:
             raise ValueError("Wrong Date Format")
 
     try:
-        end[0] != (datetime.datetime.strptime(end[0], '%Y-%b-%d'))
-        end[0] = datetime.datetime.strptime(end[0], '%Y-%b-%d').strftime('%Y-%m-%d')
+        (datetime.datetime.strptime(end_date, '%Y-%b-%d'))
+        end_date = datetime.datetime.strptime(end_date, '%Y-%b-%d').strftime('%Y-%m-%d')
     except:
         try:
-            end[0] != datetime.datetime.strptime(end[0], '%Y-%m-%d')
-            end[0] = datetime.datetime.strptime(end[0], '%Y-%m-%d').strftime('%Y-%m-%d')
+            datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y-%m-%d')
         except:
-            raise ValueError("Wrong Date Format")
-    return start[0] + "T" + start[1], end[0] + "T" + end[1]
+            raise ValueError("Wrong End Date Format")
+    
+    if int(start_date.split("-")[0]) > 2050:
+        raise ValueError("Year can't be more than 2050")
+    
+    return start_date, end_date
+
+def ensure_time_format(start_time, end_time = None):
+    try:
+        start_time == datetime.datetime.strptime(start_time, '%H:%M:%S')
+    except:
+        raise ValueError("Incorrect Start Time Format")
+    try:
+        end_time == datetime.datetime.strptime(end_time, '%H:%M:%S')
+    except:
+        raise ValueError("Incorrect End Time Format")
+
+    return 
 
 
 def address_check(location):
+    if location.upper() == 'ONLINE' or location == '':
+        return
     format = 0
     for i in range(len(location)):
         if format == 0:
@@ -286,24 +310,168 @@ def address_check(location):
                 if location[i].isupper() and location[i+1].isupper():
                     format += 1
             except:
-                
                 raise ValueError("Incorrect Address Format")
         elif format == 2:
             if str.isdigit(location[i]):
                 format += 1
     if format != 3:
         raise ValueError("Incorrect Address Format")
-    return True
+    return
+
+def print_events(api, start_time, end_time):
+    events = get_events(api, start_time, end_time)
+    if not events:
+        print('No upcoming events found.')
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        print(start, event['summary'])
+    return
+
+def search_event(api, query):
+    if query == None:
+        return
+    events_result = api.events().list(calendarId='primary', q = query, singleEvents=True, orderBy='startTime').execute()
+    events_result = events_result.get('items', [])
+    if not events_result:
+        print("No such event")
+    for event in events_result:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        print(start, event['summary'])
+    return
+
+def get_events(api, starting_time, ending_time):
+    """
+    Shows basic usage of the Google Calendar API.
+    Prints the start and name of the next n events on the user's calendar.
+    """
+
+    events_result = api.events().list(calendarId='primary', timeMin=starting_time, timeMax=ending_time, singleEvents=True,
+                                      orderBy='startTime').execute()
+    return events_result.get('items', [])
+
+def print_events(api, start_time, end_time):
+    events = get_events(api, start_time, end_time)
+    if not events:
+        print('No upcoming events found.')
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        print(start, event['summary'])
+    return
+
+
+def terminal_ui (api):
+    inp = None
+    while inp != "q":
+        inp = input(
+        """Please enter an input: 
+Q = Quit
+D = View by Day
+M = View by Month
+Y = View by Year
+S = Search
+Input: """)
+        if inp == "s":
+            query = input("What would you like to search: \n")
+            search_event(api, query)
+        if inp == "d":
+            year = input("Enter the year: \n")
+            month = input("Enter the month: \n")
+            day = input ("Enter the day: \n")
+            start_time = year + "-" + month + "-" + day + 'T00:00:00+08:00'
+            end_time = year + "-" + month + "-" + day + 'T23:59:00+08:00'
+            print_events(api, start_time, end_time)
+            while inp != "c":
+                inp = input("""Please enter another input
+Q = Quit
+I = Increase day by one
+D = Decrease day by one
+C = Change View/Change to Search
+Input: """)
+                if inp == "q":
+                    return
+                elif inp == "i":
+                    day = str(int(day) + 1)
+                    if int(day) > monthrange(int(year), int(month))[1]:
+                        month = str(int(month) + 1)
+                        day = '1'
+                    start_time = year + "-" + month + "-" + day + 'T00:00:00+08:00'
+                    end_time = year + "-" + month + "-" + day + 'T23:59:00+08:00'
+                    print_events(api, start_time, end_time)
+                elif inp == "d":
+                    day = str(int(day) - 1)
+                    start_time = year + "-" + month + "-" + day + 'T00:00:00+08:00'
+                    end_time = year + "-" + month + "-" + day + 'T23:59:00+08:00'
+                    print_events(api, start_time, end_time)
+                else:
+                    break
+        if inp == "m":
+            year = input("Enter the year: \n")
+            month = input("Enter the month: \n")
+            start_time = year + "-" + month + "-" + '1' + 'T00:00:00+08:00'
+            end_time = year + "-" + month + "-" + str(monthrange(int(year), int(month))[1]) + 'T23:59:00+08:00'
+            print_events(api, start_time, end_time)
+            while inp != "c":
+                inp = input("""Please enter another input
+Q = Quit
+I = Increase month by one
+D = Decrease month by one
+C = Change View
+Input: """)
+                if inp == "q":
+                    return
+                elif inp == "i":
+                    month = str(int(month) + 1)
+                    if int(month) > 12:
+                        month = '1'
+                        year = str(int(year) + 1)
+                    start_time = year + "-" + month + "-" + '1' + 'T00:00:00+08:00'
+                    end_time = year + "-" + month + "-" + str(monthrange(int(year), int(month))[1]) + 'T23:59:00+08:00'
+                    print_events(api, start_time, end_time)
+                elif inp == "d":
+                    month = str(int(month) - 1)
+                    if int(month) < 1:
+                        month = '12'
+                        year = str(int(year) - 1)
+                    start_time = year + "-" + month + "-" + '1' + 'T00:00:00+08:00'
+                    end_time = year + "-" + month + "-" + str(monthrange(int(year), int(month))[1]) + 'T23:59:00+08:00'
+                    print_events(api, start_time, end_time)
+                else:
+                    break
+        if inp == "y":
+            year = input("Please input a year\n")
+            start_time = year + "-" + '1' + "-" + '1' + 'T00:00:00+08:00'
+            end_time = year + "-" + '12' + "-" + str(monthrange(int(year), 12)[1]) + 'T23:59:00+08:00'
+            print_events(api, start_time, end_time)
+            while inp != "c":
+                inp = input("""Please enter another input
+Q = Quit
+I = Increase year by one
+D = Decrease year by one
+C = Change View/Change to Search
+Input: """)
+                if inp == "q":
+                    return
+                elif inp == "i":
+                    year = str(int(year) + 1)
+                    start_time = year + "-" + '1' + "-" + '1' + 'T00:00:00+08:00'
+                    end_time = year + "-" + '12' + "-" + str(monthrange(int(year), 12)[1]) + 'T23:59:00+08:00'
+                    print_events(api, start_time, end_time)
+                elif inp == "d":
+                    year = str(int(year) - 1)
+                    start_time = year + "-" + '1' + "-" + '1' + 'T00:00:00+08:00'
+                    end_time = year + "-" + '12' + "-" + str(monthrange(int(year), 12)[1]) + 'T23:59:00+08:00'
+                    print_events(api, start_time, end_time)
+    return
 
 
 def main():
     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
     # address_check(address)
-    print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
+    # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
     api = get_calendar_api()
     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
 
-    # events = get_upcoming_events(api, time_now, 10)
+    # events = get_upcoming_events(api, '2022-9-20T00:00:10+08:00', 10)
 
     # if not events:
     #     print('No upcoming events found.')
@@ -312,33 +480,12 @@ def main():
     #     print(start, event['summary'])
     
 
-    # newevent2 = insert_event(api,'2022-9-20T20:07:14+08:00','2022-9-20T20:07:14+08:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'realevent', '1234testings')
-    # delete_events(api, 'idkhowtotest')
-    delete_events(api, '1234testings')
-    """this test case written in 20/09/2022"""
-    # newlyAddedEvent = insert_event(api, datetime.datetime.now().strftime("%Y-%m-%d"), '2022-09-23T20:07:14+08:00', 'Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test10000', 'idkhowtotest') # event without any attendees
-    # print(newlyAddedEvent.get('id'))
-    # print(newlyAddedEvent.get('attendees'))
-    # # test add attendees
-    # newlyAddedEvent = add_attendee(api, 'primary', newlyAddedEvent['id'],'lloo0007@student.monash.edu') # add new attendees
-    # # remove attendees
-    # newlyAddedEvent = remove_attendee(api, 'primary', newlyAddedEvent['id'],'lloo0007@student.monash.edu') # this should remove lloo0007
-    # newlyAddedEvent = remove_attendee(api, 'primary', newlyAddedEvent['id'],'lloo0007@student.monash.edu') # this should prompt error cause event now shouldn't have anyone 
-
-
-
-    """haven't tested move_event"""
-    # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
-    # print(newevent3)
-
-    """test to modify event older than today"""
-    # newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
-    # print(newevent3['start']['date'])
-    # newevent3 = check_date(api, 'primary', '1234689')
-    # print(newevent3)
-    # newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
-    # print(newevent3)
-
+    # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
+    print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+    # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
+    # user_interface(api, time_now)
+    # terminal_ui(api)
+    # ensure_time_format('20:07:14')
     # delete_events(api, 'date12345')
     # print(newevent2.get('attendees'))
     # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
