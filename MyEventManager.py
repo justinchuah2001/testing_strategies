@@ -20,6 +20,7 @@ from __future__ import print_function
 import datetime
 import pickle
 import os.path
+from subprocess import check_output
 from tracemalloc import start
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -89,7 +90,9 @@ def insert_event(api, starting_date, ending_date, start_time, end_time, event_lo
     ensure_time_format(start_time, end_time)
     start = starting_date + "T" + start_time + "+08:00"
     end = ending_date + "T" + end_time + "+08:00"
-    address_check(event_location)
+    flag = address_check(event_location)
+    if not flag:
+        event_location = 'online'
 
     if len(attendee) > 20:
         raise ValueError("There can't be more than 20 attendees")
@@ -140,8 +143,23 @@ def check_details(api, ownCalendarId, eventIdToBeChecked):
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
 
-# undergoing construction
-def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees: list):
+def check_emailFormat(email):
+    findAt = -1
+    i = 0
+    if email is None or email == '':
+        raise ValueError("Email format is incorrect.")
+    while i < (len(email)):
+        if email[i] == '@':
+            findAt = i
+            break
+        i += 1
+    if findAt == -1 or findAt+1 == len(email):
+        raise ValueError("Email format is incorrect.")
+    else:
+        return True
+    
+
+def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees):
     event = check_details(api,ownId,eventId)
     event = check_date(api,ownId,eventId)
     # get current event details
@@ -150,13 +168,21 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     newEventLocation = event['location']
     newEventStatus = event['status']
     newEventName = event['summary']
+    # if current event has attendees, get the current list, else, creates an empty list
     if event.get('attendees') != None:
         newEventAttendees = event['attendees']
     else: 
         newEventAttendees = []
-    # wait for lipin to change this with time format
+
     if newStartDate is not None and newEndDate is not None:
+        if newStartDate == '' or newEndDate == '':
+            raise ValueError("Start or end time must be a string.")
         starting_date, ending_date = ensure_date_format(starting_date, ending_date)
+        ensure_time_format(newStartTime, newEndTime)
+        start = starting_date + "T" + newStartTime + "+08:00"
+        end = ending_date + "T" + newEndTime + "+08:00"
+        newEventSDatetime = start
+        newEventEDatetime = end
     if newName is not None:
         newEventName = newName
     if newLocation is not None:
@@ -165,10 +191,9 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     if newStatus is not None:
         newEventStatus = newStatus
     if newAttendees is not None:
-        temp = []
         for i in range (len(newAttendees)):
-            temp.append({newAttendees[i]})
-        newEventAttendees = temp
+            check_emailFormat(newAttendees[i])
+            newEventAttendees.append({newAttendees[i]})
 
     eventbody = {
                 "kind": "calendar#event",
@@ -178,10 +203,10 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
                 "location": newEventLocation,
                 "status": newEventStatus,
                 "start": {
-                    "dateTime": starting_date
+                    "dateTime": newEventEDatetime
                 },
                 "end": {
-                    "dateTime": ending_date
+                    "dateTime": newEventSDatetime
                 },
                 "attendees": newEventAttendees,
                 "guestsCanInviteOthers": 'False',
@@ -210,6 +235,7 @@ def move_event(api, originalId, newId, eventId):
 def add_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
     event = check_date(api,ownId,eventId)
+    check_emailFormat(attendeeEmail)
     newattendeee = {"email": attendeeEmail, "organiser": 'False'}
     if event.get('attendees') != None:
         event['attendees'].append(newattendeee)
@@ -227,6 +253,7 @@ def add_attendee(api, ownId, eventId, attendeeEmail: str):
 def remove_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
     event = check_date(api,ownId,eventId)
+    check_emailFormat(attendeeEmail)
     found = -1
     i = 0
     if event.get('attendees') != None:
@@ -299,7 +326,7 @@ def ensure_time_format(start_time, end_time = None):
 
 def address_check(location):
     if location.upper() == 'ONLINE' or location == '':
-        return
+        return False
     format = 0
     for i in range(len(location)):
         if format == 0:
@@ -316,7 +343,7 @@ def address_check(location):
                 format += 1
     if format != 3:
         raise ValueError("Incorrect Address Format")
-    return
+    return True
 
 def print_events(api, start_time, end_time):
     events = get_events(api, start_time, end_time)
