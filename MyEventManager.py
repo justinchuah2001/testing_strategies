@@ -393,6 +393,7 @@ def search_event(api, query):
     events_result = events_result.get('items', [])
     if not events_result:
         print("No such event")
+        return
     for event in events_result:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
@@ -416,7 +417,14 @@ def print_events(api, start_time, end_time):
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
     return
+import json
+def export_event(api, id):
+    items = get_events(api, id)
 
+ 
+    with open("sample.json", "w") as outfile:
+        json.dump(items, outfile)
+    return
 
 def terminal_ui (api):
     inp = None
@@ -537,13 +545,14 @@ def main():
     # for event in events:
     #     start = event['start'].get('dateTime', event['start'].get('date'))
     #     print(start, event['summary'])
-    
+    check_emailFormat("something@gmail.com")
 
-    # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
+    # newevent2 = insert_event(api,'primary', '2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'abc123abc', 'something@gmail.com')
+    # export_event(api, 'abc123abc')
     # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
-    terminal_ui(api)
+    # terminal_ui(api)
     # ensure_time_format('20:07:14')
     # delete_events(api, 'date12345')
     # print(newevent2.get('attendees'))
