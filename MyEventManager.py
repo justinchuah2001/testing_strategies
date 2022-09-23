@@ -91,9 +91,7 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     flag = address_check(event_location)
     if not flag:
         event_location = 'online'
-
-    # add roles to owner
-    create_owner(api, calID, calID)
+        
     # add roles to attendees, also check the attendees email format
     attendeesFormat = []
     for i in range (len(attendees)):
@@ -164,6 +162,8 @@ def check_emailFormat(email):
     #     return True
         # pass the regular expression
     # and the string into the fullmatch() method
+    if email == "primary":
+        return True
     if(re.fullmatch(regex, email)):
         return True
     else:
@@ -536,7 +536,7 @@ def main():
     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
     api = get_calendar_api()
     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-    terminal_ui(api)
+    # terminal_ui(api)
     # events = get_upcoming_events(api, '2022-9-20T00:00:10+08:00', 10)
 
     # if not events:
@@ -548,6 +548,7 @@ def main():
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
     print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+    insert_event(api,'primary', '2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'abc123abc', ['something@gmail.com'])
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
     # terminal_ui(api)
