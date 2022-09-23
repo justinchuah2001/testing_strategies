@@ -20,6 +20,7 @@ from __future__ import print_function
 import datetime
 import pickle
 import os.path
+import re
 from subprocess import check_output
 from tracemalloc import start
 from googleapiclient.discovery import build
@@ -29,7 +30,7 @@ from calendar import monthrange
 # If modifying these scopes, delete the file token.pickle.
 # SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 def get_calendar_api():
     """
@@ -148,19 +149,25 @@ def check_details(api, ownCalendarId, eventIdToBeChecked):
         raise ValueError("Only organiser of the event can manage the event details!")
 
 def check_emailFormat(email):
-    findAt = -1
-    i = 0
-    if email is None or email == '':
-        raise ValueError("Email format is incorrect.")
-    while i < (len(email)):
-        if email[i] == '@':
-            findAt = i
-            break
-        i += 1
-    if findAt == -1 or findAt+1 == len(email):
-        raise ValueError("Email format is incorrect.")
-    else:
+    # findAt = -1
+    # i = 0
+    # if email is None or email == '':
+    #     raise ValueError("Email format is incorrect.")
+    # while i < (len(email)):
+    #     if email[i] == '@':
+    #         findAt = i
+    #         break
+    #     i += 1
+    # if findAt == -1 or findAt+1 == len(email):
+    #     raise ValueError("Email format is incorrect.")
+    # else:
+    #     return True
+        # pass the regular expression
+    # and the string into the fullmatch() method
+    if(re.fullmatch(regex, email)):
         return True
+    else:
+        raise ValueError("Email format is incorrect.")
     
 
 def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees):
@@ -529,7 +536,7 @@ def main():
     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
     api = get_calendar_api()
     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-
+    terminal_ui(api)
     # events = get_upcoming_events(api, '2022-9-20T00:00:10+08:00', 10)
 
     # if not events:
