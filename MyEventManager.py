@@ -94,9 +94,6 @@ def insert_event(api, starting_date, ending_date, start_time, end_time, event_lo
     if not flag:
         event_location = 'online'
 
-    if len(attendee) > 20:
-        raise ValueError("There can't be more than 20 attendees")
-
     eventbody = {
                     "kind": "calendar#event",
                     "id": id,
@@ -346,14 +343,41 @@ def address_check(location):
         raise ValueError("Incorrect Address Format")
     return True
 
-def print_events(api, start_time, end_time):
-    events = get_events(api, start_time, end_time)
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
-    return
+def create_reader(api, calendarId, user_email):
+    rolebody = {
+        "role": "reader",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+
+def create_writer(api, calendarId, user_email):
+    rolebody = {
+        "role": "writer",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+
+def create_owner(api, calendarId, user_email):
+    rolebody = {
+        "role": "owner",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+    
+    
+
 
 def search_event(api, query):
     if query == None:
