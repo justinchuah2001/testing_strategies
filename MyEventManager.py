@@ -137,8 +137,9 @@ def check_date(api, ownCalendarId, eventIdToBeChecked):
 
 def check_details(api, ownCalendarId, eventIdToBeChecked):
     event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
-    current_organiser = event['organiser']['email']
-    if api == current_organiser:
+    current_organiser = event['organizer']['email']
+    print("HELLO " + str(current_organiser))
+    if ownCalendarId == current_organiser:
         return event
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
