@@ -94,9 +94,6 @@ def insert_event(api, starting_date, ending_date, start_time, end_time, event_lo
     if not flag:
         event_location = 'online'
 
-    if len(attendee) > 20:
-        raise ValueError("There can't be more than 20 attendees")
-
     eventbody = {
                     "kind": "calendar#event",
                     "id": id,
@@ -137,8 +134,9 @@ def check_date(api, ownCalendarId, eventIdToBeChecked):
 
 def check_details(api, ownCalendarId, eventIdToBeChecked):
     event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
-    current_organiser = event['organiser']['email']
-    if api == current_organiser:
+    current_organiser = event['organizer']['email']
+    print("HELLO " + str(current_organiser))
+    if ownCalendarId == current_organiser:
         return event
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
@@ -320,6 +318,7 @@ def ensure_time_format(start_time, end_time = None):
         end_time == datetime.datetime.strptime(end_time, '%H:%M:%S')
     except:
         raise ValueError("Incorrect End Time Format")
+
     return 
 
 
@@ -344,14 +343,41 @@ def address_check(location):
         raise ValueError("Incorrect Address Format")
     return True
 
-def print_events(api, start_time, end_time):
-    events = get_events(api, start_time, end_time)
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
-    return
+def create_reader(api, calendarId, user_email):
+    rolebody = {
+        "role": "reader",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+
+def create_writer(api, calendarId, user_email):
+    rolebody = {
+        "role": "writer",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+
+def create_owner(api, calendarId, user_email):
+    rolebody = {
+        "role": "owner",
+        "scope": {
+        "type": "user",
+        "value": user_email
+        }
+    }
+    created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
+    print(created_rule)
+    
+    
+
 
 def search_event(api, query):
     if query == None:
@@ -507,10 +533,10 @@ def main():
     
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
-    # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+    print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
-    terminal_ui(api)
+    # terminal_ui(api)
     # ensure_time_format('20:07:14')
     # delete_events(api, 'date12345')
     # print(newevent2.get('attendees'))
