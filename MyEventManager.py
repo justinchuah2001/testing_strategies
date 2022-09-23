@@ -73,26 +73,32 @@ def get_upcoming_events(api, starting_time, number_of_events):
     return events_result.get('items', [])
 
 # test insert()
-def insert_event(api, starting_date, ending_date, start_time, end_time, event_location, event_name, id):
-    """
-    Shows basic usage of the Google Calendar API.
-    Prints the start and name of the next n events on the user's calendar.
-    """
-    # attendee
-    attendee = [1,2]
+def insert_event(api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees):
+    # checks the start end date format (yyyy-mm-dd || dd-MON-yy), id format, and time format (24hr)
     if (starting_date == '') or (ending_date == ''):
         raise ValueError("Start or end time must be a string.")
-    
     if (len(id) < 5 or len(id) > 1024):
         raise ValueError("id must be between 5 to 1024 characters!")
-
     starting_date, ending_date = ensure_date_format(starting_date, ending_date)
     ensure_time_format(start_time, end_time)
+    check_emailFormat(calID)
+
+    # combine date and time together to become datetime format
     start = starting_date + "T" + start_time + "+08:00"
     end = ending_date + "T" + end_time + "+08:00"
+    # check if address is either online or physical location
     flag = address_check(event_location)
     if not flag:
         event_location = 'online'
+
+    # add roles to owner
+    create_owner(api, calID, calID)
+    # add roles to attendees, also check the attendees email format
+    attendeesFormat = []
+    for i in range (len(attendees)):
+        check_emailFormat(attendees[i])
+        create_reader(api, attendees[i], attendees[i])
+        attendeesFormat.append({"email": attendees[i]})
 
     eventbody = {
                     "kind": "calendar#event",
@@ -106,6 +112,7 @@ def insert_event(api, starting_date, ending_date, start_time, end_time, event_lo
                     "end": {
                         "dateTime": end
                     },
+                    "attendees": attendeesFormat,
                     "guestsCanInviteOthers": 'False',
                     "guestsCanModify": 'False',
                     "guestsCanSeeOtherGuests": 'True',
@@ -118,7 +125,7 @@ def insert_event(api, starting_date, ending_date, start_time, end_time, event_lo
                     "eventType": 'default'
                 }
 
-    events_result = api.events().insert(calendarId='primary', body=eventbody).execute()
+    events_result = api.events().insert(calendarId=calID, body=eventbody).execute()
     return events_result
 
 # function to check if the current event needed to be updated is valid today till 2050
@@ -134,9 +141,8 @@ def check_date(api, ownCalendarId, eventIdToBeChecked):
 
 def check_details(api, ownCalendarId, eventIdToBeChecked):
     event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
-    current_organiser = event['organizer']['email']
-    print("HELLO " + str(current_organiser))
-    if ownCalendarId == current_organiser:
+    event_organiser_email = event['organizer']['email']
+    if ownCalendarId == event_organiser_email:
         return event
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
@@ -158,8 +164,12 @@ def check_emailFormat(email):
     
 
 def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees):
+    # check if the user requesting to modify the event is the organizer of the event
+    # check whether the event to be modified is within modifiable range of date
+    # check the calendarID of the current user
     event = check_details(api,ownId,eventId)
     event = check_date(api,ownId,eventId)
+    check_emailFormat(ownId)
     # get current event details
     newEventSDatetime = event['start']['datetime']
     newEventEDatetime = event['end']['datetime']
@@ -191,7 +201,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     if newAttendees is not None:
         for i in range (len(newAttendees)):
             check_emailFormat(newAttendees[i])
-            newEventAttendees.append({newAttendees[i]})
+            newEventAttendees.append({"email": newAttendees[i]})
 
     eventbody = {
                 "kind": "calendar#event",
@@ -352,7 +362,7 @@ def create_reader(api, calendarId, user_email):
         }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
-    print(created_rule)
+    return created_rule
 
 def create_writer(api, calendarId, user_email):
     rolebody = {
@@ -363,7 +373,7 @@ def create_writer(api, calendarId, user_email):
         }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
-    print(created_rule)
+    return created_rule
 
 def create_owner(api, calendarId, user_email):
     rolebody = {
@@ -374,10 +384,7 @@ def create_owner(api, calendarId, user_email):
         }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
-    print(created_rule)
-    
-    
-
+    return created_rule
 
 def search_event(api, query):
     if query == None:
