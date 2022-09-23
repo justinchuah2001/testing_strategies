@@ -533,10 +533,10 @@ def main():
     
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
-    print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+    # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
-    # terminal_ui(api)
+    terminal_ui(api)
     # ensure_time_format('20:07:14')
     # delete_events(api, 'date12345')
     # print(newevent2.get('attendees'))
