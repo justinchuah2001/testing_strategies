@@ -427,7 +427,6 @@ def print_events(api, start_time, end_time):
 import json
 def export_event(api, id):
     items = get_events(api, id)
-
  
     with open("sample.json", "w") as outfile:
         json.dump(items, outfile)
@@ -544,7 +543,7 @@ def main():
     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
     api = get_calendar_api()
     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-    terminal_ui(api)
+    # terminal_ui(api)
     # events = get_upcoming_events(api, '2022-9-20T00:00:10+08:00', 10)
 
     # if not events:
@@ -552,10 +551,10 @@ def main():
     # for event in events:
     #     start = event['start'].get('dateTime', event['start'].get('date'))
     #     print(start, event['summary'])
-    check_emailFormat("something@gmail.com")
+    # check_emailFormat("something@gmail.com")
 
-    # newevent2 = insert_event(api,'primary', '2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'abc123abc', 'something@gmail.com')
-    # export_event(api, 'abc123abc')
+    newevent2 = insert_event(api,'primary', '2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'abc123abc', 'something@gmail.com')
+    export_event(api, 'abc123abc')
     # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
