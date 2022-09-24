@@ -285,7 +285,7 @@ def remove_attendee(api, ownId, eventId, attendeeEmail: str):
     else: 
         raise ValueError("There are no attendees in the event!")
 
-def get_events(api, Id):
+def get_event(api, Id):
     event = api.events().get(calendarId='primary', eventId=Id).execute()
     return event['summary']
 
@@ -403,6 +403,7 @@ def search_event(api, query):
     events_result = events_result.get('items', [])
     if not events_result:
         print("No such event")
+        return
     for event in events_result:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
@@ -425,6 +426,14 @@ def print_events(api, start_time, end_time):
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
+    return
+    
+import json
+def export_event(api, starting_time, ending_time):
+    items = get_events(api, starting_time, ending_time)
+ 
+    with open("sample.json", "w") as outfile:
+        json.dump(items, outfile)
     return
 
 
@@ -547,11 +556,12 @@ def main():
     # for event in events:
     #     start = event['start'].get('dateTime', event['start'].get('date'))
     #     print(start, event['summary'])
-    
+    # check_emailFormat("something@gmail.com")
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
     print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
-    insert_event(api,'primary', '2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'abc123abc', ['something@gmail.com'])
+    # insert_event(api,'primary', '2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'abc123abc', ['lloo0007@student.monash.edu'])
+    export_event(api, '2022-9-20T00:00:10+08:00', '2022-9-21T00:00:10+08:00')
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
     # terminal_ui(api)
