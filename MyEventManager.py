@@ -27,6 +27,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from calendar import monthrange
+import json
 # If modifying these scopes, delete the file token.pickle.
 # SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -74,7 +75,7 @@ def get_upcoming_events(api, starting_time, number_of_events):
     return events_result.get('items', [])
 
 # test insert()
-def insert_event(api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees):
+def insert_event(api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees = None):
     # checks the start end date format (yyyy-mm-dd || dd-MON-yy), id format, and time format (24hr)
     if (starting_date == '') or (ending_date == ''):
         raise ValueError("Start or end time must be a string.")
@@ -96,7 +97,7 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     attendeesFormat = []
     for i in range (len(attendees)):
         check_emailFormat(attendees[i])
-        create_reader(api, attendees[i], attendees[i])
+        create_reader(api, calID, attendees[i])
         attendeesFormat.append({"email": attendees[i]})
 
     eventbody = {
@@ -365,7 +366,7 @@ def create_reader(api, calendarId, user_email):
         "role": "reader",
         "scope": {
         "type": "user",
-        "value": user_email
+        "value": user_email,
         }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
@@ -425,13 +426,28 @@ def print_events(api, start_time, end_time):
         print(start, event['summary'])
     return
     
-import json
 def export_event(api, starting_time, ending_time):
     items = get_events(api, starting_time, ending_time)
  
-    with open("sample.json", "w") as outfile:
+    with open("output.json", "w") as outfile:
         json.dump(items, outfile)
     return
+
+def import_event(api):
+    f = open('output.json')
+    data = json.load(f)
+    calID = 'primary'
+    for i in data:
+        startDateTime = i['start']['dateTime']
+        endDateTime = i['end']['dateTime']
+        event_location = i['location']
+        event_name = i['summary']
+        id = i['id']
+        startDate = startDateTime.split("T")
+        endDate = endDateTime.split("T")
+        startTime = startDate[1].split("+")
+        endTime = endDate[1].split("+")
+        insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
 
 
 def terminal_ui (api):
@@ -557,8 +573,9 @@ def main():
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
     print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
-    # insert_event(api,'primary', '2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'abc123abc', ['lloo0007@student.monash.edu'])
-    export_event(api, '2022-9-20T00:00:10+08:00', '2022-9-21T00:00:10+08:00')
+    insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'ccc123ccc', ['lloo0007@student.monash.edu'])
+    # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
+    # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
     # terminal_ui(api)
