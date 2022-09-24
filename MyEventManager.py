@@ -125,12 +125,14 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
                     "eventType": 'default'
                 }
 
-    events_result = api.events().insert(calendarId=calID, body=eventbody).execute()
+    events_result = api.events().insert(calendarId=calID, body=eventbody, sendUpdates='all').execute()
     return events_result
 
 # function to check if the current event needed to be updated is valid today till 2050
 def check_date(startDate):
     date = startDate.split("T")[0]
+    time = startDate.split("T")[1].split("+")[0]
+    ensure_time_format(time)
     upper_bound = "2022-12-31"
     today_date =  datetime.datetime.today()
     if date >= today_date and date <= upper_bound:
@@ -572,7 +574,7 @@ def main():
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
     # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
-    # insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'ccc123ccc', ['lloo0007@student.monash.edu'])
+    insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'gggg123gg', ['loolipin0321@gmail.com'])
     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
     # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
