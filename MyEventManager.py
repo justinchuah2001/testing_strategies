@@ -82,7 +82,8 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     if (len(id) < 5 or len(id) > 1024):
         raise ValueError("id must be between 5 to 1024 characters!")
     starting_date, ending_date = ensure_date_format(starting_date, ending_date)
-    ensure_time_format(start_time, end_time)
+    ensure_time_format(start_time)
+    ensure_time_format(end_time)
     check_emailFormat(calID)
 
     # combine date and time together to become datetime format
@@ -133,9 +134,10 @@ def check_date(startDate):
     date = startDate.split("T")[0]
     time = startDate.split("T")[1].split("+")[0]
     ensure_time_format(time)
-    upper_bound = "2022-12-31"
-    today_date =  datetime.datetime.today()
-    if date >= today_date and date <= upper_bound:
+    dateandtime = datetime.datetime.strptime(date + " " + time, "%Y-%m-%d %H:%M:%S")
+    upper_bound = datetime.datetime.strptime("2050-12-31 23:59:59", "%Y-%m-%d %H:%M:%S")
+    today_date =  datetime.datetime.now()
+    if dateandtime >= today_date and dateandtime <= upper_bound:
         return True
     else:
         raise ValueError("Can only modify events that are present and max year 2050")
@@ -162,7 +164,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     # check whether the event to be modified is within modifiable range of date
     # check the calendarID of the current user
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
-    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    current_date = datetime.datetime.strptime(event['start']['datetime'])
     check_date(current_date)
     event = check_details(api,ownId,eventId)
     check_emailFormat(ownId)
@@ -182,7 +184,8 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
         if newStartDate == '' or newEndDate == '':
             raise ValueError("Start or end time must be a string.")
         starting_date, ending_date = ensure_date_format(starting_date, ending_date)
-        ensure_time_format(newStartTime, newEndTime)
+        ensure_time_format(newStartTime)
+        ensure_time_format(newEndTime)
         start = starting_date + "T" + newStartTime + "+08:00"
         end = ending_date + "T" + newEndTime + "+08:00"
         newEventSDatetime = start
@@ -239,7 +242,7 @@ def move_event(api, originalId, newId, eventId):
 def add_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
-    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    current_date = datetime.datetime.strptime(event['start']['datetime'])
     check_date(current_date)
     check_emailFormat(attendeeEmail)
     newattendeee = {"email": attendeeEmail, "organiser": 'False'}
@@ -259,7 +262,7 @@ def add_attendee(api, ownId, eventId, attendeeEmail: str):
 def remove_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
-    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    current_date = datetime.datetime.strptime(event['start']['datetime'])
     check_date(current_date)
     check_emailFormat(attendeeEmail)
     found = -1
@@ -321,16 +324,11 @@ def ensure_date_format(start_date, end_date = None):
     
     return start_date, end_date
 
-def ensure_time_format(start_time, end_time = None):
+def ensure_time_format(time):
     try:
-        start_time == datetime.datetime.strptime(start_time, '%H:%M:%S')
+        time == datetime.datetime.strptime(time, '%H:%M:%S')
     except:
         raise ValueError("Incorrect Start Time Format")
-    try:
-        end_time == datetime.datetime.strptime(end_time, '%H:%M:%S')
-    except:
-        raise ValueError("Incorrect End Time Format")
-
     return True
 
 
