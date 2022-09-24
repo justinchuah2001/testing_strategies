@@ -31,14 +31,21 @@ class MyEventManagerTest(unittest.TestCase):
         calID = "123456@gmail.com"
         attendees = ["23456@gmail.com"]
 
-    def test_get_events(self):
-        starting_time = '2022-9-20T00:00:10+08:00'
-        ending_time = '2022-9-20T00:00:10+08:00'
         mock_api = MagicMock()
         events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
         self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
         args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
         self.assertEqual(kwargs.get('body').get('id'), id)
+
+
+    # def test_get_events(self):
+    #     starting_time = '2022-9-20T00:00:10+08:00'
+    #     ending_time = '2022-9-20T00:00:10+08:00'
+    #     mock_api = MagicMock()
+    #     events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+    #     self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+    #     args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
+    #     self.assertEqual(kwargs.get('body').get('id'), id)
 
     # after rewrite
     # def test_valid_check_date(self):
