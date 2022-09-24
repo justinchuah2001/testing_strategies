@@ -48,10 +48,14 @@ class MyEventManagerTest(unittest.TestCase):
     #     self.assertEqual(kwargs.get('body').get('id'), id)
 
     # after rewrite
-    # def test_valid_check_date(self):
-    #     todayDate = datetime.now().strftime()
+    def test_valid_check_date(self):
+        todayDate = "2024-09-22T00:00:00+08:00"
+        self.assertEqual(MyEventManager.check_date(todayDate), True)
 
-    #     MyEventManager.check_date(todayDate)
+    def test_invalid_check_date(self):
+        todayDate = "2020-09-22T00:00:00+08:00"
+        with self.assertRaises(ValueError):
+            self.assertEqual(MyEventManager.check_date(todayDate))
     
     def test_check_details(self):
         calId = "113@gmail.com"
@@ -92,19 +96,26 @@ class MyEventManagerTest(unittest.TestCase):
     def test_valid_time_format(self):
         starttime = "9:6:23"
         endtime = "15:55:3"
-        flag = MyEventManager.ensure_time_format(starttime, endtime)
+        flag = MyEventManager.ensure_time_format(starttime)
+        self.assertEqual(flag, True)
+
+        flag = MyEventManager.ensure_time_format(endtime)
         self.assertEqual(flag, True)
 
     def test_invalid_time_format(self):
         starttime = "23:66:8"
         endtime = "5:12:69"
         with self.assertRaises(ValueError):
-            MyEventManager.ensure_date_format(starttime, endtime)
+            MyEventManager.ensure_date_format(starttime)
+        with self.assertRaises(ValueError):
+            MyEventManager.ensure_date_format(endtime)
 
         starttime = "23:6:8"
         endtime = "5:12:9"
         with self.assertRaises(ValueError):
             MyEventManager.ensure_date_format(starttime, endtime)
+        with self.assertRaises(ValueError):
+            MyEventManager.ensure_date_format(endtime)
 
     def test_valid_address_format(self):
         address = 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA'
