@@ -9,7 +9,6 @@ stages:
 #         - echo "Building"
 #         - pip3 install --upgrade pip
 #         - python3 MyEventManager.py
-
 test:
     stage: test
     image: python:3.8-alpine
