@@ -9,13 +9,12 @@ stages:
 #         - echo "Building"
 #         - pip3 install --upgrade pip
 #         - python3 MyEventManager.py
-
+job: 
+    tags:
+        - test
 test:
     stage: test
     image: python:3.8-alpine
-    job: 
-        tags:
-            - test
     script:
         - echo "Testing"
         # - pip3 install --upgrade pip
