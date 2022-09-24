@@ -13,6 +13,7 @@ stages:
 test:
     stage: test
     image: python:3.8-alpine
+    job: test
     script:
         - echo "Testing"
         # - pip3 install --upgrade pip
