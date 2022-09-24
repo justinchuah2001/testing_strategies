@@ -129,40 +129,23 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     return events_result
 
 # function to check if the current event needed to be updated is valid today till 2050
-def check_date(api, ownCalendarId, eventIdToBeChecked):
-    event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
-    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+def check_date(startDate):
+    current_date = datetime.datetime.strptime(startDate,'%Y-%m-%d')
     today_date =  datetime.datetime.today()
     upper_bound = datetime.datetime(2050,12,31)
     if current_date >= today_date and current_date <= upper_bound:
-        return event
+        return True
     else:
         raise ValueError("Can only modify events that are present and max year 2050")
 
-def check_details(api, ownCalendarId, eventIdToBeChecked):
-    flag = api.acl().get(calendarId=ownCalendarId, ruleId='writer').execute()
+def check_details(api, ownCalendarId):
+    flag = api.acl().get(calendarId=ownCalendarId, ruleId='user:' + str(ownCalendarId)).execute()
     if flag is not None:
-        event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
-        return event
+        return True
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
 
 def check_emailFormat(email):
-    # findAt = -1
-    # i = 0
-    # if email is None or email == '':
-    #     raise ValueError("Email format is incorrect.")
-    # while i < (len(email)):
-    #     if email[i] == '@':
-    #         findAt = i
-    #         break
-    #     i += 1
-    # if findAt == -1 or findAt+1 == len(email):
-    #     raise ValueError("Email format is incorrect.")
-    # else:
-    #     return True
-        # pass the regular expression
-    # and the string into the fullmatch() method
     if email == "primary":
         return True
     if(re.fullmatch(regex, email)):
@@ -172,11 +155,12 @@ def check_emailFormat(email):
     
 
 def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees):
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
     # check if the user requesting to modify the event is the organizer of the event
     # check whether the event to be modified is within modifiable range of date
     # check the calendarID of the current user
-    event = check_details(api,ownId,eventId)
-    event = check_date(api,ownId,eventId)
+    check_details(api,ownId,eventId)
+    check_date(event['start']['datetime'])
     check_emailFormat(ownId)
     # get current event details
     newEventSDatetime = event['start']['datetime']
@@ -301,8 +285,8 @@ def delete_events(api,  Id):
 
 def ensure_date_format(start_date, end_date = None):
     try:
-        datetime.datetime.strptime(start_date, '%Y-%b-%d')
-        start_date = datetime.datetime.strptime(start_date, '%Y-%b-%d').strftime('%Y-%m-%d')
+        datetime.datetime.strptime(start_date, '%d-%b-%y')
+        start_date = datetime.datetime.strptime(start_date, '%d-%b-%y').strftime('%Y-%m-%d')
         
     except:
         try:
@@ -313,8 +297,8 @@ def ensure_date_format(start_date, end_date = None):
             raise ValueError("Wrong Date Format")
 
     try:
-        (datetime.datetime.strptime(end_date, '%Y-%b-%d'))
-        end_date = datetime.datetime.strptime(end_date, '%Y-%b-%d').strftime('%Y-%m-%d')
+        (datetime.datetime.strptime(end_date, '%d-%b-%y'))
+        end_date = datetime.datetime.strptime(end_date, '%d-%b-%y').strftime('%Y-%m-%d')
     except:
         try:
             datetime.datetime.strptime(end_date, '%Y-%m-%d')
@@ -324,6 +308,8 @@ def ensure_date_format(start_date, end_date = None):
     
     if int(start_date.split("-")[0]) > 2050:
         raise ValueError("Year can't be more than 2050")
+    if start_date > end_date:
+        raise ValueError("Start date must be smaller than end date")
     
     return start_date, end_date
 
@@ -337,7 +323,7 @@ def ensure_time_format(start_time, end_time = None):
     except:
         raise ValueError("Incorrect End Time Format")
 
-    return 
+    return True
 
 
 def address_check(location):
@@ -575,8 +561,8 @@ def main():
     # check_emailFormat("something@gmail.com")
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
-    print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
-    insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'ccc123ccc', ['lloo0007@student.monash.edu'])
+    # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+    # insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'ccc123ccc', ['lloo0007@student.monash.edu'])
     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
     # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
