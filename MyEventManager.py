@@ -12,7 +12,7 @@
 # no test cases for authentication, but authentication may required for running the app very first time.
 # http://googleapis.github.io/google-api-python-client/docs/dyn/calendar_v3.html
 # Name: Li Pin
-# Student ID: 31108555 aa
+# Student ID: 31108555 add to push
 
 
 # Code adapted from https://developers.google.com/calendar/quickstart/python
@@ -119,7 +119,7 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
                     "reminders": {
                         "useDefault": 'False',
                         "overrides": [
-                            {'method': 'popup', 'minutes': 10}
+                            {'method': 'popup', 'minutes': 30}
                         ]
                     },
                     "eventType": 'default'
@@ -130,10 +130,10 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
 
 # function to check if the current event needed to be updated is valid today till 2050
 def check_date(startDate):
-    current_date = datetime.datetime.strptime(startDate,'%Y-%m-%d')
+    date = startDate.split("T")[0]
+    upper_bound = "2022-12-31"
     today_date =  datetime.datetime.today()
-    upper_bound = datetime.datetime(2050,12,31)
-    if current_date >= today_date and current_date <= upper_bound:
+    if date >= today_date and date <= upper_bound:
         return True
     else:
         raise ValueError("Can only modify events that are present and max year 2050")
@@ -159,8 +159,10 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     # check if the user requesting to modify the event is the organizer of the event
     # check whether the event to be modified is within modifiable range of date
     # check the calendarID of the current user
-    check_details(api,ownId,eventId)
-    check_date(event['start']['datetime'])
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    check_date(current_date)
+    event = check_details(api,ownId,eventId)
     check_emailFormat(ownId)
     # get current event details
     newEventSDatetime = event['start']['datetime']
@@ -215,7 +217,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
                 "reminders": {
                     "useDefault": 'False',
                     "overrides": [
-                        {'method': 'popup', 'minutes': 10}
+                        {'method': 'popup', 'minutes': 20}
                     ]
                 },
                 "eventType": 'default'
@@ -234,7 +236,9 @@ def move_event(api, originalId, newId, eventId):
 # else, just append at the back of the list
 def add_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
-    event = check_date(api,ownId,eventId)
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    check_date(current_date)
     check_emailFormat(attendeeEmail)
     newattendeee = {"email": attendeeEmail, "organiser": 'False'}
     if event.get('attendees') != None:
@@ -252,7 +256,9 @@ def add_attendee(api, ownId, eventId, attendeeEmail: str):
 # else, that means no attendee attribute, so no attendees at all, so raise another error
 def remove_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
-    event = check_date(api,ownId,eventId)
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    check_date(current_date)
     check_emailFormat(attendeeEmail)
     found = -1
     i = 0
@@ -272,7 +278,7 @@ def remove_attendee(api, ownId, eventId, attendeeEmail: str):
 
 def get_event(api, Id):
     event = api.events().get(calendarId='primary', eventId=Id).execute()
-    return event['summary']
+    return event.get('items', [])
 
 def delete_events(api,  Id):
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
@@ -354,7 +360,12 @@ def create_reader(api, calendarId, user_email):
         "type": "user",
         "value": user_email
         },
-        "id": "reader"
+        "reminders": {
+                    "useDefault": 'False',
+                    "overrides": [
+                        {'method': 'popup', 'minutes': 20}
+                    ]
+                }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -365,8 +376,7 @@ def create_writer(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        },
-        "id": "writer"
+        }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -377,8 +387,7 @@ def create_owner(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        },
-        "id": "owner"
+        }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -417,6 +426,7 @@ def print_events(api, start_time, end_time):
     
 def export_event(api, starting_time, ending_time):
     items = get_events(api, starting_time, ending_time)
+    print(items)
  
     with open("output.json", "w") as outfile:
         json.dump(items, outfile)
