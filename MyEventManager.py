@@ -129,20 +129,14 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     return events_result
 
 # function to check if the current event needed to be updated is valid today till 2050
-def check_date(api, ownCalendarId, eventIdToBeChecked):
-    event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
-    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+def check_date(startDate):
+    date = startDate.split("T")[0]
+    upper_bound = "2022-12-31"
     today_date =  datetime.datetime.today()
-    upper_bound = datetime.datetime(2050,12,31)
-    if current_date >= today_date and current_date <= upper_bound:
-        return event
+    if date >= today_date and date <= upper_bound:
+        return True
     else:
         raise ValueError("Can only modify events that are present and max year 2050")
-
-def checkDate(startDate):
-    date = startDate.split("-")[0]
-    # current_date = datetime.datetime.strptime(startDate[0], '%Y-%m-%d').strftime('%Y')
-    print(date)
 
 def check_details(api, ownCalendarId, eventIdToBeChecked):
     flag = api.acl().get(calendarId=ownCalendarId, ruleId='writer').execute()
@@ -180,8 +174,10 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     # check if the user requesting to modify the event is the organizer of the event
     # check whether the event to be modified is within modifiable range of date
     # check the calendarID of the current user
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    check_date(current_date)
     event = check_details(api,ownId,eventId)
-    event = check_date(api,ownId,eventId)
     check_emailFormat(ownId)
     # get current event details
     newEventSDatetime = event['start']['datetime']
@@ -255,7 +251,9 @@ def move_event(api, originalId, newId, eventId):
 # else, just append at the back of the list
 def add_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
-    event = check_date(api,ownId,eventId)
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    check_date(current_date)
     check_emailFormat(attendeeEmail)
     newattendeee = {"email": attendeeEmail, "organiser": 'False'}
     if event.get('attendees') != None:
@@ -273,7 +271,9 @@ def add_attendee(api, ownId, eventId, attendeeEmail: str):
 # else, that means no attendee attribute, so no attendees at all, so raise another error
 def remove_attendee(api, ownId, eventId, attendeeEmail: str):
     event = check_details(api,ownId,eventId)
-    event = check_date(api,ownId,eventId)
+    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
+    current_date = datetime.datetime.strptime(event['start']['date'],'%Y-%m-%d')
+    check_date(current_date)
     check_emailFormat(attendeeEmail)
     found = -1
     i = 0
@@ -586,7 +586,7 @@ def main():
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
     # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
     # insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'reed', 'abd123abd', ['loolipin0321@gmail.com'])
-    checkDate('2022-9-20T00:00:10+08:00')
+    check_date('2022-9-20T00:00:10+08:00')
     # export_event(api, '2022-9-23T00:00:10+08:00', '2022-9-24T00:00:10+08:00')
     # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
