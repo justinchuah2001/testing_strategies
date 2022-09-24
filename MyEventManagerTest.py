@@ -88,6 +88,7 @@ class MyEventManagerTest(unittest.TestCase):
         args, kwargs = mock_api.acl.return_value.get.call_args_list[0]
         self.assertEqual(kwargs.get("calendarId"), calId)
 
+
     def test_valid_email_format(self):
         email = "kekw@gmail.com"
         flag = MyEventManager.check_emailFormat(email)
