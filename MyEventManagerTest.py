@@ -38,6 +38,28 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(kwargs.get('body').get('id'), id)
 
 
+    def test_search_event(self):
+        query = 'parallel'
+        mock_api = MagicMock()
+        events = MyEventManager.search_event(mock_api, query) #i don't understand but ok
+        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+        args, kwargs = mock_api.events.return_value.list.call_args_list[0]
+        self.assertEqual(kwargs.get('q'), query)
+
+
+    def test_get_events(self):
+        starting_time = '2022-9-20T00:00:10+8:00'
+        ending_time = '2022-9-20T00:00:10+8:00'
+        mock_api = MagicMock()
+        events = MyEventManager.get_events(mock_api, starting_time, ending_time) #i don't understand but ok
+        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+        args, kwargs = mock_api.events.return_value.list.call_args_list[0]
+        self.assertEqual(kwargs.get('timeMin'), starting_time)
+        self.assertEqual(kwargs.get('timeMax'), ending_time)
+
+
+
+
     # def test_get_events(self):
     #     starting_time = '2022-9-20T00:00:10+08:00'
     #     ending_time = '2022-9-20T00:00:10+08:00'
