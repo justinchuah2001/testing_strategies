@@ -97,13 +97,17 @@ class MyEventManagerTest(unittest.TestCase):
             MyEventManager.ensure_date_format(starttime, endtime)
 
     def test_valid_address_format(self):
-        address = 'Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA'
+        address = 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA'
         flag = MyEventManager.address_check(address)
         self.assertEqual(flag, True)
-        
+
         address = 'Mr Morrison 11 Banks Av WAGGA WAGGA NSW 2650 AUSTRALIA'
         flag = MyEventManager.address_check(address)
         self.assertEqual(flag, True)
+
+        address = ''
+        flag = MyEventManager.address_check(address)
+        self.assertEqual(flag, False)
 
     def test_invalid_address_format(self):
         address = '52, jalan 1234A, KL'
