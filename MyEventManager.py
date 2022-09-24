@@ -133,8 +133,9 @@ def check_date(startDate):
     date = startDate.split("T")[0]
     time = startDate.split("T")[1].split("+")[0]
     ensure_time_format(time)
-    upper_bound = "2022-12-31"
-    today_date =  datetime.datetime.today()
+    dateandtime = date + " " + time
+    upper_bound = "2022-12-31 23:59:59"
+    today_date =  datetime.datetime.now()
     if date >= today_date and date <= upper_bound:
         return True
     else:
