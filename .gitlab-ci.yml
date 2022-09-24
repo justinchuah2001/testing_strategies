@@ -14,7 +14,7 @@ test:
     stage: test
     image: python:3.8-alpine
     job: 
-        tag:
+        tags:
             -test
     script:
         - echo "Testing"
