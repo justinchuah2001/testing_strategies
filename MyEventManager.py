@@ -119,7 +119,7 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
                     "reminders": {
                         "useDefault": 'False',
                         "overrides": [
-                            {'method': 'popup', 'minutes': 10}
+                            {'method': 'popup', 'minutes': 30}
                         ]
                     },
                     "eventType": 'default'
@@ -138,6 +138,11 @@ def check_date(api, ownCalendarId, eventIdToBeChecked):
         return event
     else:
         raise ValueError("Can only modify events that are present and max year 2050")
+
+def checkDate(startDate):
+    date = startDate.split("-")[0]
+    # current_date = datetime.datetime.strptime(startDate[0], '%Y-%m-%d').strftime('%Y')
+    print(date)
 
 def check_details(api, ownCalendarId, eventIdToBeChecked):
     flag = api.acl().get(calendarId=ownCalendarId, ruleId='writer').execute()
@@ -231,7 +236,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
                 "reminders": {
                     "useDefault": 'False',
                     "overrides": [
-                        {'method': 'popup', 'minutes': 10}
+                        {'method': 'popup', 'minutes': 20}
                     ]
                 },
                 "eventType": 'default'
@@ -288,7 +293,7 @@ def remove_attendee(api, ownId, eventId, attendeeEmail: str):
 
 def get_event(api, Id):
     event = api.events().get(calendarId='primary', eventId=Id).execute()
-    return event['summary']
+    return event.get('items', [])
 
 def delete_events(api,  Id):
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
@@ -368,7 +373,12 @@ def create_reader(api, calendarId, user_email):
         "type": "user",
         "value": user_email
         },
-        "id": "reader"
+        "reminders": {
+                    "useDefault": 'False',
+                    "overrides": [
+                        {'method': 'popup', 'minutes': 20}
+                    ]
+                }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -379,8 +389,7 @@ def create_writer(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        },
-        "id": "writer"
+        }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -391,8 +400,7 @@ def create_owner(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        },
-        "id": "owner"
+        }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -431,6 +439,7 @@ def print_events(api, start_time, end_time):
     
 def export_event(api, starting_time, ending_time):
     items = get_events(api, starting_time, ending_time)
+    print(items)
  
     with open("output.json", "w") as outfile:
         json.dump(items, outfile)
@@ -575,9 +584,10 @@ def main():
     # check_emailFormat("something@gmail.com")
 
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
-    print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
-    insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'ccc123ccc', ['lloo0007@student.monash.edu'])
-    # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
+    # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+    # insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'reed', 'abd123abd', ['loolipin0321@gmail.com'])
+    checkDate('2022-9-20T00:00:10+08:00')
+    # export_event(api, '2022-9-23T00:00:10+08:00', '2022-9-24T00:00:10+08:00')
     # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
     # user_interface(api, time_now)
