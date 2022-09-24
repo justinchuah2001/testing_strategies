@@ -12,7 +12,7 @@
 # no test cases for authentication, but authentication may required for running the app very first time.
 # http://googleapis.github.io/google-api-python-client/docs/dyn/calendar_v3.html
 # Name: Li Pin
-# Student ID: 31108555 aa
+# Student ID: 31108555 add to push
 
 
 # Code adapted from https://developers.google.com/calendar/quickstart/python
