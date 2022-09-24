@@ -15,7 +15,7 @@ test:
     image: python:3.8-alpine
     job: 
         tags:
-            -test
+            - test
     script:
         - echo "Testing"
         # - pip3 install --upgrade pip
