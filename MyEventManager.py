@@ -96,7 +96,7 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     attendeesFormat = []
     for i in range (len(attendees)):
         check_emailFormat(attendees[i])
-        create_reader(api, attendees[i], attendees[i])
+        create_reader(api, calID, attendees[i])
         attendeesFormat.append({"email": attendees[i]})
 
     eventbody = {
@@ -139,9 +139,9 @@ def check_date(api, ownCalendarId, eventIdToBeChecked):
         raise ValueError("Can only modify events that are present and max year 2050")
 
 def check_details(api, ownCalendarId, eventIdToBeChecked):
-    event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
-    event_organiser_email = event['organizer']['email']
-    if ownCalendarId == event_organiser_email:
+    flag = api.acl().get(calendarId=ownCalendarId, ruleId='writer').execute()
+    if flag is not None:
+        event = api.events().get(calendarId=ownCalendarId, eventId=eventIdToBeChecked).execute()
         return event
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
@@ -366,7 +366,8 @@ def create_reader(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        }
+        },
+        "id": "reader"
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -377,7 +378,8 @@ def create_writer(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        }
+        },
+        "id": "writer"
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -388,7 +390,8 @@ def create_owner(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        }
+        },
+        "id": "owner"
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
