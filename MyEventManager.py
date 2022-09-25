@@ -143,9 +143,8 @@ def check_date(startDate):
     else:
         raise ValueError("Can only modify events that are present and max year 2050")
 
-def check_details(api, ownCalendarId):
-    flag = api.acl().get(calendarId=ownCalendarId, ruleId='user:' + str(ownCalendarId)).execute()
-    if flag is not None:
+def check_details(ownCalendarId, eventorgId):
+    if ownCalendarId == eventorgId:
         return True
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
@@ -160,14 +159,15 @@ def check_emailFormat(email):
     
 
 def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees):
-    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
     # check if the user requesting to modify the event is the organizer of the event
     # check whether the event to be modified is within modifiable range of date
     # check the calendarID of the current user
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
-    current_date = datetime.datetime.strptime(event['start']['datetime'])
+    current_date = event['start']['datetime']
+    eventorg = event['organizer']['email']
+    print(eventorg)
     check_date(current_date)
-    event = check_details(api,ownId,eventId)
+    check_details(ownId,eventorg)
     check_emailFormat(ownId)
     # get current event details
     newEventSDatetime = event['start']['datetime']
@@ -180,7 +180,6 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
         newEventAttendees = event['attendees']
     else: 
         newEventAttendees = []
-    check_attendee_limit(newEventAttendees)
 
     if newStartDate is not None and newEndDate is not None:
         if newStartDate == '' or newEndDate == '':
@@ -203,6 +202,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
         for i in range (len(newAttendees)):
             check_emailFormat(newAttendees[i])
             newEventAttendees.append({"email": newAttendees[i]})
+            check_attendee_limit(newEventAttendees)
 
     eventbody = {
                 "kind": "calendar#event",
@@ -238,54 +238,10 @@ def move_event(api, originalId, newId, eventId):
     events_result = api.events().move(calendarId=originalId, eventId=eventId, destination=newId).execute()
     return events_result
 
-# this is okay, it runs:
-# if this event has no attendee attribute (aka, no attendee at first), it creates the attribute then add people inside
-# else, just append at the back of the list
-def add_attendee(api, ownId, eventId, attendeeEmail: str):
-    event = check_details(api,ownId,eventId)
-    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
-    current_date = datetime.datetime.strptime(event['start']['datetime'])
-    check_date(current_date)
-    check_emailFormat(attendeeEmail)
-    newattendeee = {"email": attendeeEmail, "organiser": 'False'}
-    if event.get('attendees') != None:
-        event['attendees'].append(newattendeee)
-    else:
-        event['attendees'] = [newattendeee]
-        # add one line that limits maxAttendee
-    event = api.events().update(calendarId=ownId, eventId=event['id'], body=event).execute()
-    return event
-    
-
-# this is okay, it runs:
-# if this event has attendee attribute (aka, no attendee at first), it runs a linear search to find the attendee email
-# if no email is found, raise error, else, remove 
-# else, that means no attendee attribute, so no attendees at all, so raise another error
-def remove_attendee(api, ownId, eventId, attendeeEmail: str):
-    event = check_details(api,ownId,eventId)
-    event = api.events().get(calendarId=ownId, eventId=eventId).execute()
-    current_date = datetime.datetime.strptime(event['start']['datetime'])
-    check_date(current_date)
-    check_emailFormat(attendeeEmail)
-    found = -1
-    i = 0
-    if event.get('attendees') != None:
-        while i < len(event['attendees']):
-            if event['attendees'][i]['email'] == attendeeEmail:
-                found = i
-                break
-            i += 1
-        if found == -1:
-            raise ValueError("No attendees match the email")
-        event['attendees'].remove(event['attendees'][found])
-        event = api.events().update(calendarId=ownId, eventId=event['id'], body=event).execute()
-        return event
-    else: 
-        raise ValueError("There are no attendees in the event!")
-
 def delete_events(api, calId, Id):
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
     event = api.events().get(calendarId=calId, eventId = Id).execute()
+    # print(event)
     if event.get('end').get('datetime') > time_now:
         raise ValueError("Only past events can be deleted")
     else:
@@ -403,12 +359,10 @@ def search_event(api, query):
     events_result = api.events().list(calendarId='primary', q = query, singleEvents=True, orderBy='startTime').execute()
     events_result = events_result.get('items', [])
     if not events_result:
-        print("No such event")
-        return
+        return "No such event"
     for event in events_result:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
-    return
 
 def get_events(api, starting_time, ending_time):
     """
@@ -423,19 +377,16 @@ def get_events(api, starting_time, ending_time):
 def print_events(api, start_time, end_time):
     events = get_events(api, start_time, end_time)
     if not events:
-        print('No upcoming events found.')
+        return 'No upcoming events found.'
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
-    return
     
 def export_event(api, starting_time, ending_time):
     items = get_events(api, starting_time, ending_time)
-    print(items)
  
     with open("output.json", "w") as outfile:
         json.dump(items, outfile)
-    return
 
 def import_event(api):
     f = open('output.json')
@@ -452,7 +403,6 @@ def import_event(api):
         startTime = startDate[1].split("+")
         endTime = endDate[1].split("+")
         insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
-
 
 def terminal_ui (api):
     inp = None
