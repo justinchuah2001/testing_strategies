@@ -281,17 +281,17 @@ def remove_attendee(api, ownId, eventId, attendeeEmail: str):
     else: 
         raise ValueError("There are no attendees in the event!")
 
-def get_event(api, Id):
-    event = api.events().get(calendarId='primary', eventId=Id).execute()
+def get_event(api, calId, Id):
+    event = api.events().get(calendarId=calId, eventId=Id).execute()
     return event.get('items', [])
 
-def delete_events(api,  Id):
+def delete_events(api, calId, Id):
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
-    event = api.events().get(calendarId='primary', eventId = Id).execute()
-    if event.get('end').get('dateTime') > time_now:
+    event = api.events().get(calendarId=calId, eventId = Id).execute()
+    if event.get('end').get('datetime') > time_now:
         raise ValueError("Only past events can be deleted")
     else:
-        api.events().delete(calendarId='primary', eventId=Id).execute()
+        api.events().delete(calendarId=calId, eventId=Id).execute()
     return
 
 def ensure_date_format(start_date, end_date = None):
