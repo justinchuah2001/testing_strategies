@@ -153,7 +153,7 @@ def check_details(api, ownCalendarId):
 def check_emailFormat(email):
     if email == "primary":
         return True
-    if(re.fullmatch(regex, email)):
+    elif(re.fullmatch(regex, email)):
         return True
     else:
         raise ValueError("Email format is incorrect.")
@@ -283,10 +283,6 @@ def remove_attendee(api, ownId, eventId, attendeeEmail: str):
     else: 
         raise ValueError("There are no attendees in the event!")
 
-def get_event(api, calId, Id):
-    event = api.events().get(calendarId=calId, eventId=Id).execute()
-    return event.get('items', [])
-
 def delete_events(api, calId, Id):
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
     event = api.events().get(calendarId=calId, eventId = Id).execute()
@@ -336,7 +332,7 @@ def ensure_time_format(time):
     try:
         time == datetime.datetime.strptime(time, '%H:%M:%S')
     except:
-        raise ValueError("Incorrect Start Time Format")
+        raise ValueError("Incorrect Time Format")
     return True
 
 
