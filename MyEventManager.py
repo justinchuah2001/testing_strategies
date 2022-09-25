@@ -232,6 +232,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     event = api.events().update(calendarId=ownId, eventId=event['id'], body=eventbody).execute()
     return event
 
+
 # only works with personal email
 def move_event(api, originalId, newId, eventId):
     # the authentication popped, choose the new calendar ID you wish to move to, NOT YOUR OWN CALENDAR
@@ -242,6 +243,9 @@ def move_event(api, originalId, newId, eventId):
 # if this event has no attendee attribute (aka, no attendee at first), it creates the attribute then add people inside
 # else, just append at the back of the list
 def add_attendee(api, ownId, eventId, attendeeEmail: str):
+    """
+    This function is used to add attendee to the event
+    """
     event = check_details(api,ownId,eventId)
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
     current_date = datetime.datetime.strptime(event['start']['datetime'])
@@ -262,6 +266,9 @@ def add_attendee(api, ownId, eventId, attendeeEmail: str):
 # if no email is found, raise error, else, remove 
 # else, that means no attendee attribute, so no attendees at all, so raise another error
 def remove_attendee(api, ownId, eventId, attendeeEmail: str):
+    """
+    This function is to remove attendees from the event
+    """
     event = check_details(api,ownId,eventId)
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
     current_date = datetime.datetime.strptime(event['start']['datetime'])
@@ -288,6 +295,9 @@ def get_event(api, Id):
     return event.get('items', [])
 
 def delete_events(api,  Id):
+    """
+    This function is used to delete events in the calendar, it also disallows the user to delete events in the future.
+    """
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
     event = api.events().get(calendarId='primary', eventId = Id).execute()
     if event.get('end').get('dateTime') > time_now:
@@ -297,12 +307,19 @@ def delete_events(api,  Id):
     return
 
 def check_attendee_limit(attendees):
+    """
+    This function is to check whether the amount of attendees are within the accepted limits.
+    """
     if len(attendees) <= 20:
         return attendees
     else:
         raise ValueError("There are too many attendees")
 
 def ensure_date_format(start_date, end_date = None):
+    """
+    This function is to make sure that the date format input is only in the 2 accepted formats
+    which are %d-%b-%y and %Y-%m-%d
+    """
     try:
         datetime.datetime.strptime(start_date, '%d-%b-%y')
         start_date = datetime.datetime.strptime(start_date, '%d-%b-%y').strftime('%Y-%m-%d')
@@ -333,6 +350,9 @@ def ensure_date_format(start_date, end_date = None):
     return start_date, end_date
 
 def ensure_time_format(time):
+    """
+    This is to ensure that the time format is within the accepted time format of %H:%M:%S
+    """
     try:
         time == datetime.datetime.strptime(time, '%H:%M:%S')
     except:
@@ -341,6 +361,9 @@ def ensure_time_format(time):
 
 
 def address_check(location):
+    """
+    This is to ensure that the address input is within the accepted time format of the US or Australian format
+    """
     if location.upper() == 'ONLINE' or location == '':
         return False
     format = 0
@@ -362,6 +385,9 @@ def address_check(location):
     return True
 
 def create_reader(api, calendarId, user_email):
+    """
+    To create the role of reader
+    """
     rolebody = {
         "role": "reader",
         "scope": {
@@ -380,6 +406,9 @@ def create_reader(api, calendarId, user_email):
 
 
 def create_writer(api, calendarId, user_email):
+    """
+    To create the role of writer
+    """
     rolebody = {
         "role": "writer",
         "scope": {
@@ -391,6 +420,9 @@ def create_writer(api, calendarId, user_email):
     return created_rule
 
 def create_owner(api, calendarId, user_email):
+    """
+    To create the role of owner
+    """
     rolebody = {
         "role": "owner",
         "scope": {
@@ -402,6 +434,9 @@ def create_owner(api, calendarId, user_email):
     return created_rule
 
 def search_event(api, query):
+    """
+    This function allows the user to search for events
+    """
     if query == None:
         return
     events_result = api.events().list(calendarId='primary', q = query, singleEvents=True, orderBy='startTime').execute()
@@ -425,6 +460,9 @@ def get_events(api, starting_time, ending_time):
     return events_result.get('items', [])
 
 def print_events(api, start_time, end_time):
+    """
+    This function is called by the terminal user interface to print the events of desired date
+    """
     events = get_events(api, start_time, end_time)
     if not events:
         print('No upcoming events found.')
@@ -434,6 +472,9 @@ def print_events(api, start_time, end_time):
     return
     
 def export_event(api, starting_time, ending_time):
+    """
+    This is to export the event to a json format that allows it to be imported later on
+    """
     items = get_events(api, starting_time, ending_time)
     print(items)
  
@@ -442,6 +483,9 @@ def export_event(api, starting_time, ending_time):
     return
 
 def import_event(api):
+    """
+    This is to import the event to a json format
+    """
     f = open('output.json')
     data = json.load(f)
     calID = 'primary'
@@ -459,6 +503,9 @@ def import_event(api):
 
 
 def terminal_ui (api):
+    """
+    This is the user interface to show how the navigation works
+    """
     inp = None
     while inp != "q":
         inp = input(
@@ -578,10 +625,11 @@ def main():
     #     start = event['start'].get('dateTime', event['start'].get('date'))
     #     print(start, event['summary'])
     # check_emailFormat("something@gmail.com")
-
+    # move_event(api/, 'loolipin0321@gmail.com', 'lloo0007@student.monash.edu', 'aaa123ggg')
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
     # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
-    insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'gggg123gg', ['loolipin0321@gmail.com'])
+    # insert_event(api,'primary', '2022-9-25','2022-9-25','14:07:14','15:50:00','', 'test_cancel', 'bcs123bcs', ['loolipin0321@gmail.com'])
+    delete_events(api,  'bcs123bcs')
     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
     # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
