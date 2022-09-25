@@ -631,7 +631,7 @@ def main():
     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
     # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
     # insert_event(api,'primary', '2022-9-25','2022-9-25','14:07:14','15:50:00','', 'test_cancel', 'bcs123bcs', ['loolipin0321@gmail.com'])
-    delete_events(api,  'bcs123bcs')
+    address_check('Mrs Smith 546 Fake St. Clayton')
     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
     # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
