@@ -12,30 +12,66 @@ In this assignment, we are going to employ various automated **BlackBox** and **
 
 ## Test Suite 1: Creation of Events
 
-Testing technique:
+***Description:***
+
+***Testing method:*** 
+
+***Tester:***
+
+Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
+
+***Rationale:***
 
 ## Test Suite 2: Creation of Events Organiser
 
-Testing technique: 
+***Description:***
+
+***Testing method:*** 
+
+***Tester:***
+
+Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
+
+***Rationale:***
 
 ## Test Suite 3: Creation of Attendees
 
-Testing technique: 
+***Description:***
+
+***Testing method:*** 
+
+***Tester:***
+
+Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
+
+***Rationale:***
 
 ## Test Suite 4: Testing of Reminders(Notifications)
 
-Testing technique: 
+***Description:***
+
+***Testing method:*** 
+
+***Tester:***
+
+Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
+
+***Rationale:***
 
 ## Test Suite 5: Testing of Navigation
 
-Testing technique: 
+***Description:***
+
+***Testing method:*** 
+
+***Tester:***
+
+Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
+
+***Rationale:***
 
 ## Test Suite 6: Testing the import and export of event
 
-Testing technique: 
-
-## Test Suite 1
-
 ***Description:***
 
 ***Testing method:*** 
@@ -45,78 +81,6 @@ Testing technique:
 Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
-
-Test Suite 1 - Creation of events
-
-## Test Suite 2
-
-***Description:***
-
-***Testing method:*** 
-
-***Tester:***
-
-Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
-
-***Rationale:***
-
-Test Suite 2 - Creation of Event Organiser
-
-## Test Suite 3
-
-***Description:***
-
-***Testing method:*** 
-
-***Tester:***
-
-Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
-
-***Rationale:***
-
-Test Suite 3 - Creation of attendees
-
-## Test Suite 4
-
-***Description:***
-
-***Testing method:*** 
-
-***Tester:***
-
-Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
-
-***Rationale:***
-
-Test Suite 4 - Testing on Reminders
-
-## Test Suite 5
-
-***Description:***
-
-***Testing method:*** 
-
-***Tester:***
-
-Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
-
-***Rationale:***
-
-Test Suite 5 - Testing on Reminders
-
-## Test Suite 6
-
-***Description:***
-
-***Testing method:*** 
-
-***Tester:***
-
-Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
-
-***Rationale:***
-
-Test Suite 6 - Testing on Import and Export
 
 # Implementation:
 
