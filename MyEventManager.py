@@ -233,6 +233,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     return event
 
 
+
 # only works with personal email
 def move_event(api, originalId, newId, eventId):
     # the authentication popped, choose the new calendar ID you wish to move to, NOT YOUR OWN CALENDAR
@@ -299,12 +300,13 @@ def delete_events(api,  Id):
     This function is used to delete events in the calendar, it also disallows the user to delete events in the future.
     """
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
-    event = api.events().get(calendarId='primary', eventId = Id).execute()
-    if event.get('end').get('dateTime') > time_now:
+    event = api.events().get(calendarId=calId, eventId = Id).execute()
+    if event.get('end').get('datetime') > time_now:
         raise ValueError("Only past events can be deleted")
     else:
-        api.events().delete(calendarId='primary', eventId=Id).execute()
+        api.events().delete(calendarId=calId, eventId=Id).execute()
     return
+
 
 def check_attendee_limit(attendees):
     """
