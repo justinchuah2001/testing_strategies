@@ -85,6 +85,7 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     ensure_time_format(start_time)
     ensure_time_format(end_time)
     check_emailFormat(calID)
+    check_attendee_limit(attendees)
 
     # combine date and time together to become datetime format
     start = starting_date + "T" + start_time + "+08:00"
@@ -179,6 +180,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
         newEventAttendees = event['attendees']
     else: 
         newEventAttendees = []
+    check_attendee_limit(newEventAttendees)
 
     if newStartDate is not None and newEndDate is not None:
         if newStartDate == '' or newEndDate == '':
@@ -294,6 +296,12 @@ def delete_events(api, calId, Id):
         api.events().delete(calendarId=calId, eventId=Id).execute()
     return
 
+def check_attendee_limit(attendees):
+    if len(attendees) <= 20:
+        return attendees
+    else:
+        raise ValueError("There are too many attendees")
+
 def ensure_date_format(start_date, end_date = None):
     try:
         datetime.datetime.strptime(start_date, '%d-%b-%y')
@@ -369,6 +377,7 @@ def create_reader(api, calendarId, user_email):
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
+
 
 def create_writer(api, calendarId, user_email):
     rolebody = {

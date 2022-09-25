@@ -18,6 +18,57 @@ class MyEventManagerTest(unittest.TestCase):
         args, kwargs = mock_api.events.return_value.list.call_args_list[0]
         self.assertEqual(kwargs['maxResults'], num_events)
 
+    # Add more test cases here
+    # This test tests number of upcoming events.
+    def test_insert_event(self):
+        start_date = "2022-09-25"
+        end_date = "2022-09-26"
+        start_time = "20:06:14"
+        end_time = "20:06:14"
+        id = '753951'
+        event_name = 'PEPEGA'
+        location = ""
+        calID = "123456@gmail.com"
+        attendees = ["23456@gmail.com"]
+
+        mock_api = MagicMock()
+        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
+        self.assertEqual(kwargs.get('body').get('id'), id)
+
+
+    def test_search_event(self):
+        query = 'parallel'
+        mock_api = MagicMock()
+        events = MyEventManager.search_event(mock_api, query) #i don't understand but ok
+        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+        args, kwargs = mock_api.events.return_value.list.call_args_list[0]
+        self.assertEqual(kwargs.get('q'), query)
+
+
+    def test_get_events(self):
+        starting_time = '2022-9-20T00:00:10+8:00'
+        ending_time = '2022-9-20T00:00:10+8:00'
+        mock_api = MagicMock()
+        events = MyEventManager.get_events(mock_api, starting_time, ending_time) #i don't understand but ok
+        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+        args, kwargs = mock_api.events.return_value.list.call_args_list[0]
+        self.assertEqual(kwargs.get('timeMin'), starting_time)
+        self.assertEqual(kwargs.get('timeMax'), ending_time)
+
+
+
+
+    # def test_get_events(self):
+    #     starting_time = '2022-9-20T00:00:10+08:00'
+    #     ending_time = '2022-9-20T00:00:10+08:00'
+    #     mock_api = MagicMock()
+    #     events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+    #     self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+    #     args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
+    #     self.assertEqual(kwargs.get('body').get('id'), id)
+
     # after rewrite
     def test_valid_check_date(self):
         todayDate = "2024-09-22T00:00:00+08:00"
@@ -36,6 +87,7 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count, 0)
         args, kwargs = mock_api.acl.return_value.get.call_args_list[0]
         self.assertEqual(kwargs.get("calendarId"), calId)
+
 
     def test_valid_email_format(self):
         email = "kekw@gmail.com"
@@ -105,45 +157,18 @@ class MyEventManagerTest(unittest.TestCase):
         address = '52, jalan 1234A, KL'
         with self.assertRaises(ValueError):
             MyEventManager.address_check(address)
-
-    # Add more test cases here
-    # This test tests number of upcoming events.
-    def test_insert_event(self):
-        start_date = "2022-09-25"
-        end_date = "2022-09-26"
-        start_time = "20:06:14"
-        end_time = "20:06:14"
-        id = '753951'
-        event_name = 'PEPEGA'
-        location = ""
-        calID = "123456@gmail.com"
-        attendees = ["23456@gmail.com"]
-
-        mock_api = MagicMock()
-        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
-        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
-        self.assertEqual(kwargs.get('body').get('id'), id)
-
-
-    def test_get_events(self):
-        calID = "123456@gmail.com"
-        id = '753951'
-        mock_api = MagicMock()
-        events = MyEventManager.get_event(mock_api, calID, id) #i don't understand but ok
-        self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count, 1)
-        args, kwargs = mock_api.events.return_value.get.call_args_list[0] # this line to get the event body
-        self.assertEqual(kwargs.get('eventId'), id)
-
-    def test_delete_events(self):
-        calID = "123456@gmail.com"
-        id = '753951'
-        mock_api = MagicMock()
-        events = MyEventManager.delete_events(mock_api, calID, id) #i don't understand but ok
-        self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count, 1)
-        args, kwargs = mock_api.events.return_value.get.call_args_list[0] # this line to get the event body
-        self.assertEqual(kwargs.get('eventId'), id)
     
+    def test_attendees_limit(self):
+        attendees = ['john@gmail.com', 'hi@gmail.com']
+        guest = MyEventManager.check_attendee_limit(attendees)
+        self.assertEqual(len(guest)<=20, True)
+    
+    def test_invalid_attendees_limit(self):
+        attendees = ['john@gmail.com', 'hi@gmail.com', '1@gmail.com', '2@gmail.com', '3@gmail.com', '4@gmail.com', '5@gmail,com', '6@gmail.com'
+        '7@gmail.com', '8@gmail.com', '9@gmail.com', '10@gmail.com', '13@gmail.com', '14@gmail.com', '15@gmail.com', '16@gmail.com', '17@gmail.com', 
+        '18@gmail.com', '19@gmail.com', '20@gmail.com', '12@gmail.com', '21@gmail.com']
+        with self.assertRaises(ValueError):
+            MyEventManager.check_attendee_limit(attendees)
 
 def main():
     # Create the test suite from the cases above.
