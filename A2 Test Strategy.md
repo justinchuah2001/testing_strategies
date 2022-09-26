@@ -223,11 +223,11 @@ This test frame is to test insert_event function, a function that allows a user 
 
 | Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
 | --- | --- | --- | --- |
-| 1 | * start_date = "2022-09-25" * end_date = "2022-09-26" * start_time = "20:06:14" * end_time = "20:06:14" * id = '753951' * event_name = 'PEPEGA' * location = "" * calID = "123456@gmail.com" * attendees = ["23456@gmail.com"] | True (event resource id == id) | True (event resource id == id) |
+| 1 | start_date = "2022-09-25" <br> end_date = "2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> id = '753951' <br> event_name = 'PEPEGA' <br> location = "" <br> calID = "123456@gmail.com" <br> attendees = ["23456@gmail.com"] | True (event resource id == id) | True (event resource id == id) |
 | --- | --- | --- | --- |
-| 2 | * start_date = "" * end_date = "" * start_time = "20:06:14" * end_time = "20:06:14" * id = '753951' * event_name = 'PEPEGA'* location = "" * calID = "123456@gmail.com" * attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
+| 2 | <br> start_date = "" <br> end_date = "" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> id = '753951' <br> event_name = 'PEPEGA' <br> location = "" <br> calID = "123456@gmail.com" <br> attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
 | --- | --- | --- | --- |
-| 3 | * nstart_date =  "2022-09-25" * end_date = "2022-09-26" * start_time = "20:06:14" * end_time = "20:06:14"* id = '1'* event_name = 'PEPEGA'* location = "" * calID = "123456@gmail.com" * attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
+| 3 | <br> nstart_date =  "2022-09-25" <br> end_date = "2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> id = '1' <br> event_name = 'PEPEGA'<br> location = "" <br> calID = "123456@gmail.com" <br> attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
 | --- | --- | --- | --- |
 
 ## Test Suite 3: Creation of Attendees
