@@ -19,7 +19,11 @@ In this assignment, we are going to employ various automated **BlackBox** and **
 
 ## Spec 1: Event
 
-For spec 1, we need to implement the functionality of creating event in the calendar. The event should have its own id, name, attendees, date and location which can be online or physical at a venue, so the function **insert\_event** is created. This event can be set up on past, future and present dates but only can delete the events on past dates, function **delete\_event** will make this work, which this is different from cancel an event, a cancelled event will stay as achieved that can be restored in future if needed, and also the function **check\_emailFormat** is used to check the correct format of email.  Also we need to check the date and location format in the function. Event dates can only be yyyy-mm-dd (2022-02-22) format or dd-MON-yy (12-AUG-22), function **ensure\_time\_format** is used to check the format of starting date and ending date of event. Event location can only be American, Australian or abbreviated street types, so **address\_check** is created to check the location of event(online/physical) and the format of location.
+For spec 1, we need to implement the functionality of creating event in the calendar. The event should have its own id, name, attendees, date and location which can be online or physical at a venue, so the function **insert\_event** is created which will be explained more in detail in specification 2 **Event Organizer**. This event can be set up on past, future and present dates but only can delete the events on past dates, function **delete\_event** will make this work, which this is different from cancel an event, a cancelled event will stay as achieved that can be restored in future if needed, (don't think needed here) and also the function **check\_emailFormat** is used to check the correct format of email.
+
+Event dates can only be yyyy-mm-dd (2022-02-22) format or dd-MON-yy (12-AUG-22), function **ensure\_date\_format** is used to check the format of starting date and ending date of event. As there are certain limitations to the Google Calendar API, we had to ensure that the date format is applicable, therefore if the input parameter fulfills the specified requirements of the date format, it will be converted into the form of yyyy-mm-dd otherwise an error will be raised. Then as the calendar takes in event dates in a date time format, we have to also ensure that the time is within the accepted format, which leads to us having a **ensure\_time\_format** function. This function just takes in an input of time and make sure it is in a %H:%M:%S (20:15:20) 24 hour time format, otherwise it will raise an error.
+
+Event location can only be American, Australian or abbreviated street types, so **address\_check** is created to check the location of event(online/physical) and the format of location. In the specification it isn't really implicitly explained on how an address is checked, therefore we broke down the given examples of the address into certain patterns that we noticed which has a pattern of (Name, Street, Country). When no input is given in the parameter of the **address\_check** function, it will be assumed that the address is online.
 
 ## Spec 2: Event Organiser
 
@@ -50,14 +54,133 @@ For spec 6, the application should support importing and exporting of events in 
 ## Test Suite 1: Creation of Events
 
 ***Description:***
-
+In this test suite, we will have created all the necessary functions to ensure all the requirements in the specification is fulfilled.
 ***Testing method:*** 
-
+Branch Coverage
 ***Tester:***
 
 Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
+For this test suite, we have chosen to test it in a form of branch coverage. Firstly for the function used to ensure the address format, we have tested out all the branches that covers the function, to ensure that every decision of the program is exercised once. In here, we tested all branches that leads to a valid address and also all branches that leads to an invalid address.
+
+Moving on, in the function used to ensure the valid date format and time format, branch coverage is also implemented as a testing technique, as similarly to the address format function, we have tested all possible branches that leads to a valid date and time format and also all decisions that leads to an invalid date and time format
+
+**Testing**
+
+**Test 1**
+**Ensure Valid Address Format Function**\
+**Description:**\
+This test suite is to test the function that checks the address to make sure that it is in the correct format.\
+
+**Provided Input with Expected and Actual Output.**\
+***Test Frame 1***
+
+Test Case 1: 
+Input: 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA' \
+Expected Output: True \
+Actual Output: True
+
+Test Case 2:
+Input: 'Mr Morrison 11 Banks Av WAGGA WAGGA WEST VIRGINIA 2650 US'\
+Expected Output: True\
+Actual Output: True
+
+Test Case 3:
+Input: ''\
+Expected Output: False\
+Actual Output: False
+
+Test Case 4:
+Input: 'online;\
+Expected Output: False\
+Actual Output: False
+
+Test Case 5:
+Input: '52, jalan 1234A, KL'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+Test Case 6:
+Input: '52KL'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+Test Case 7:
+Input: 'Mrs Smith 546 Fake St. Clayton 3400 A'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+**Test 2**
+**Ensure Valid Date Format Function**\
+**Description:**\
+This test suite is to test the function that checks the date to make sure that it is in the correct format.\
+
+**Provided Input with Expected and Actual Output.**\
+***Test Frame 1***
+
+Test Case 1:
+Input: starting_date = '2022-8-4' | ending_date = '2022-9-4'\
+Expected Output: True\
+Actual Output: True\
+
+Test Case 2:
+Input: starting_date = '4-JAN-21' | ending_date = '4-OCT-22'\
+Expected Output: True\
+Actual Output: True
+
+Test Case 3:
+Input: starting_date = '2022-9-4' | ending_date = '2022-8-4'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+Test Case 4:
+Input: starting_date = '2022-9-4' | ending_date = '22-8-4'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+Test Case 5:
+Input: starting_date = '2051-9-4' | ending_date = '2052-8-4'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+Test Case 6:
+Input: starting_date = '22-9-4' | ending_date = '22-12-4'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+Test Case 7:
+Input: starting_date = '2-9-19' | ending_date = '13-12-21'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+**Test 3**
+**Ensure Time Format Function**\
+**Description:**\
+This test suite is to test the function that checks the time to make sure that it is in the correct format.\
+
+**Provided Input with Expected and Actual Output.**\
+***Test Frame 1***
+
+Test Case 1:
+Input: starttime = '9:6:23' \
+Expected Output: True\
+Actual Output: True
+
+Test Case 2:
+Input: endtime = '15:55:3'\
+Expected Output: True\
+Actual Output: True
+
+Test Case 3:
+Input: endtime = '23:66:8'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
+
+Test Case 4:
+Input: endtime = '25:12:69'\
+Expected Output: ValueError()\
+Actual Output: ValueError()
 
 ## Test Suite 2: Creation of Events Organiser
 
