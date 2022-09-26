@@ -74,41 +74,42 @@ Moving on, in the function used to ensure the valid date format and time format,
 This test suite is to test the function that checks the address to make sure that it is in the correct format.\
 
 **Provided Input with Expected and Actual Output.**\
-***Test Frame 1***\ 
+***Test Frame 1***
+
 Test Case 1: 
 Input: 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA' \
 Expected Output: True \
-Actual Output: True\
+Actual Output: True
 
 Test Case 2:
 Input: 'Mr Morrison 11 Banks Av WAGGA WAGGA WEST VIRGINIA 2650 US'\
 Expected Output: True\
-Actual Output: True\
+Actual Output: True
 
 Test Case 3:
 Input: ''\
 Expected Output: False\
-Actual Output: False\
+Actual Output: False
 
 Test Case 4:
 Input: 'online;\
 Expected Output: False\
-Actual Output: False\
+Actual Output: False
 
 Test Case 5:
 Input: '52, jalan 1234A, KL'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 Test Case 6:
 Input: '52KL'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 Test Case 7:
 Input: 'Mrs Smith 546 Fake St. Clayton 3400 A'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 **Test 2**
 **Ensure Valid Date Format Function**\
@@ -116,7 +117,8 @@ Actual Output: ValueError()\
 This test suite is to test the function that checks the date to make sure that it is in the correct format.\
 
 **Provided Input with Expected and Actual Output.**\
-***Test Frame 1***\
+***Test Frame 1***
+
 Test Case 1:
 Input: starting_date = '2022-8-4' | ending_date = '2022-9-4'\
 Expected Output: True\
@@ -125,32 +127,32 @@ Actual Output: True\
 Test Case 2:
 Input: starting_date = '4-JAN-21' | ending_date = '4-OCT-22'\
 Expected Output: True\
-Actual Output: True\
+Actual Output: True
 
 Test Case 3:
 Input: starting_date = '2022-9-4' | ending_date = '2022-8-4'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 Test Case 4:
 Input: starting_date = '2022-9-4' | ending_date = '22-8-4'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 Test Case 5:
 Input: starting_date = '2051-9-4' | ending_date = '2052-8-4'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 Test Case 6:
 Input: starting_date = '22-9-4' | ending_date = '22-12-4'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 Test Case 7:
 Input: starting_date = '2-9-19' | ending_date = '13-12-21'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 **Test 3**
 **Ensure Time Format Function**\
@@ -158,26 +160,27 @@ Actual Output: ValueError()\
 This test suite is to test the function that checks the time to make sure that it is in the correct format.\
 
 **Provided Input with Expected and Actual Output.**\
-***Test Frame 1***\
+***Test Frame 1***
+
 Test Case 1:
 Input: starttime = '9:6:23' \
 Expected Output: True\
-Actual Output: True\
+Actual Output: True
 
 Test Case 2:
 Input: endtime = '15:55:3'\
 Expected Output: True\
-Actual Output: True\
+Actual Output: True
 
 Test Case 3:
 Input: endtime = '23:66:8'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 Test Case 4:
 Input: endtime = '25:12:69'\
 Expected Output: ValueError()\
-Actual Output: ValueError()\
+Actual Output: ValueError()
 
 ## Test Suite 2: Creation of Events Organiser
 
