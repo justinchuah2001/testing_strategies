@@ -1,4 +1,4 @@
-# **FIT2107 Whitebox Testing**
+﻿# **FIT2107 Whitebox Testing**
 
 **Team: 06**
 
@@ -227,6 +227,33 @@ This test frame is to test insert_event function, a function that allows a user 
 | 2 | start_date = "" <br> end_date = "" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> id = '753951' <br> event_name = 'PEPEGA' <br> location = "" <br> calID = "123456@gmail.com" <br> attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
 | 3 | start_date =  "2022-09-25" <br> end_date = "2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> id = '1' <br> event_name = 'PEPEGA'<br> location = "" <br> calID = "123456@gmail.com" <br> attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
 
+**Test 5: delete_event Function**
+
+**Description:**
+
+This test frame is to test delete_event function, a function that allows the organizer of the event to delete the event
+
+**Provided Input with Expected and Actual Output.**
+
+***Test Frame 1***
+
+| Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | calendarId = '123@gmail.com' <br> eventId = '753951' | ValueError() | ValueError() |
+
+**Test 6: move_event Function**
+
+**Description:**
+
+This test frame is to test move_event function, a function that allows the original organizer of the event to move the organizer role to other user. Note, this only works with personal email (not monash email)
+
+**Provided Input with Expected and Actual Output.**
+
+***Test Frame 1***
+
+| Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | calId = "123456789@gmail.com" <br> newCalID = "23456@gmail.com" <br> Id = '753951' | ValueError() | ValueError() |
 
 ## Test Suite 3: Creation of Attendees
 

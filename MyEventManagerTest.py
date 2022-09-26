@@ -132,8 +132,6 @@ class MyEventManagerTest(unittest.TestCase):
         event = MyEventManager.move_event(mock_api,calId,newCalID,Id)
         self.assertEqual(mock_api.events.return_value.move.return_value.execute.return_value.get.call_count, 0)
 
-    
-
     def test_create_owner(self):
         mock_api = MagicMock()
         calId = "123456789@gmail.com"
