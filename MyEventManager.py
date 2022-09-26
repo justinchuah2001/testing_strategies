@@ -326,7 +326,6 @@ def check_attendee_limit(attendees):
     else:
         raise ValueError("There are too many attendees")
 
-
 def create_reader(api, calendarId, user_email):
     """
     To create the role of reader
@@ -336,13 +335,7 @@ def create_reader(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        },
-        "reminders": {
-                    "useDefault": 'False',
-                    "overrides": [
-                        {'method': 'popup', 'minutes': 20}
-                    ]
-                }
+        }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -375,6 +368,7 @@ def create_owner(api, calendarId, user_email):
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
+
 """ test suite 5 """
 def search_event(api, query):
     """

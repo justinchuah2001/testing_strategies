@@ -96,7 +96,6 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(kwargs.get('timeMin'), starting_time)
         self.assertEqual(kwargs.get('timeMax'), ending_time)
 
-
     def test_delete_event(self):
         calId = '123@gmail.com'
         Id = '753951'
