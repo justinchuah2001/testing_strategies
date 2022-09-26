@@ -63,13 +63,19 @@ Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Description:***
 
+Test suite 2 is created to test what the organizer of the event can do, such as move event to other attendees, update event details, etc.
+
 ***Testing method:*** 
+
+For this test suite, 
 
 ***Tester:***
 
 Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
+
+
 
 ## Test Suite 3: Creation of Attendees
 
