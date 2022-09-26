@@ -39,21 +39,10 @@ class MyEventManagerTest(unittest.TestCase):
     
     
     def test_print_events(self):
-        # start_date = "2022-09-25"
-        # end_date = "2022-09-26"
-        # start_time = "20:06:14"
-        # end_time = "20:06:14"
-        # id = '753951'
-        # event_name = 'PEPEGA'
-        # location = ""
-        # calID = "123456@gmail.com"
-        # attendees = ["23456@gmail.com"]
         mock_api = MagicMock()
-        # events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees)
-        # print("======================================")
         MyEventManager.print_events(mock_api, '2022-09-25T00:07:14+08:00', '2022-09-26T23:50:00+08:00')
         self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
+        
         
     
     def test_insert_invalid_event(self):
