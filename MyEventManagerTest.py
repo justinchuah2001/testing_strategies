@@ -20,7 +20,7 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(kwargs['maxResults'], num_events)
 
     # Add more test cases here
-    # This test tests number of upcoming events.
+    # test insert event (valid cases)
     def test_insert_valid_event(self):
         start_date = "2022-09-25"
         end_date = "2022-09-26"
@@ -33,16 +33,12 @@ class MyEventManagerTest(unittest.TestCase):
         attendees = ["23456@gmail.com"]
 
         mock_api = MagicMock()
-        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) 
         self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
+        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] 
         self.assertEqual(kwargs.get('body').get('id'), id)
     
-    def test_print_events(self):
-        mock_api = MagicMock()
-        MyEventManager.print_events(mock_api, '2022-09-25T00:07:14+08:00', '2022-09-26T23:50:00+08:00')
-        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        
+    # test insert event (invalid cases)
     def test_insert_invalid_event(self):
         start_date = ""
         end_date = ""
@@ -56,46 +52,48 @@ class MyEventManagerTest(unittest.TestCase):
 
         mock_api = MagicMock()
         with self.assertRaises(ValueError):
-            events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+            events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) 
 
         start_date = "2022-09-25"
         end_date = "2022-09-26"
         id = '1'
         mock_api = MagicMock()
         with self.assertRaises(ValueError):
-            events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+            events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) 
 
-
+    # test search event in terminal
     def test_search_event(self):
         query = 'parallel'
         mock_api = MagicMock()
-        events = MyEventManager.search_event(mock_api, query) #i don't understand but ok
+        events = MyEventManager.search_event(mock_api, query) 
         self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
         args, kwargs = mock_api.events.return_value.list.call_args_list[0]
         self.assertEqual(kwargs.get('q'), query)
 
         query = ''
         mock_api2 = MagicMock()
-        events = MyEventManager.search_event(mock_api2, query) #i don't understand but ok
+        events = MyEventManager.search_event(mock_api2, query) 
         args, kwargs2 = mock_api2.events.return_value.list.call_args_list[0]
         self.assertEqual(kwargs2.get('q'), '')
 
         query = None
         mock_api3 = MagicMock()
-        events = MyEventManager.search_event(mock_api3, query) #i don't understand but ok
+        events = MyEventManager.search_event(mock_api3, query) 
         kwargs3 = mock_api3.events.return_value.list.call_args_list
         self.assertEqual(kwargs3, [])
 
+    # test get events in terminal
     def test_get_events(self):
         starting_time = '2022-9-20T00:00:10+8:00'
         ending_time = '2022-9-20T00:00:10+8:00'
         mock_api = MagicMock()
-        events = MyEventManager.get_events(mock_api, starting_time, ending_time) #i don't understand but ok
+        events = MyEventManager.get_events(mock_api, starting_time, ending_time) 
         self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
         args, kwargs = mock_api.events.return_value.list.call_args_list[0]
         self.assertEqual(kwargs.get('timeMin'), starting_time)
         self.assertEqual(kwargs.get('timeMax'), ending_time)
 
+    # test deleting events
     def test_delete_event(self):
         calId = '123@gmail.com'
         Id = '753951'
@@ -104,6 +102,7 @@ class MyEventManagerTest(unittest.TestCase):
             MyEventManager.delete_events(mock_api, calId, Id) 
         self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count,1)
 
+    # test attendees and organizer reminders
     def test_reminders(self):
         start_date = "2022-09-25"
         end_date = "2022-09-26"
@@ -117,29 +116,33 @@ class MyEventManagerTest(unittest.TestCase):
         reminder = 30
 
         mock_api = MagicMock()
-        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) 
         self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
+        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] 
         self.assertEqual(kwargs.get('body').get('reminders').get('overrides')[0].get('minutes'), reminder)
 
+    # test export event as a file
     def test_export_events(self):
         starting_time = '2022-9-20T00:00:10+8:00'
         ending_time = '2022-9-20T00:00:10+8:00'
         mock_api = MagicMock()
         with self.assertRaises(TypeError):
             MyEventManager.export_event(mock_api, starting_time, ending_time) 
-        
+
+    # test import event from a file  
     def test_import_events(self):
         calId = "123@gmail.com"
         mock_api = MagicMock()
         MyEventManager.import_event(mock_api, calId)
         self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count,0)
 
+    # test print events in terminal
     def test_print_events(self):
         mock_api = MagicMock()
-        MyEventManager.print_events(mock_api,"2022-09-25T00:07:14+08:00","2022-09-26T23:50:00+08:00")
-        self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count,0)
+        MyEventManager.print_events(mock_api, '2022-09-25T00:07:14+08:00', '2022-09-26T23:50:00+08:00')
+        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
 
+    # test move event from one organizer to another
     def test_move_event(self):
         Id = '753951'
         mock_api = MagicMock()
@@ -149,38 +152,39 @@ class MyEventManagerTest(unittest.TestCase):
         event = MyEventManager.move_event(mock_api,calId,newCalID,Id)
         self.assertEqual(mock_api.events.return_value.move.return_value.execute.return_value.get.call_count, 0)
 
+    # test create owner ACL
     def test_create_owner(self):
         mock_api = MagicMock()
         calId = "123456789@gmail.com"
         userEmail = "lmao@gmail.com"
         events = MyEventManager.create_owner(mock_api,calId,userEmail)
         self.assertEqual(mock_api.acl.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        args, kwargs = mock_api.acl.return_value.insert.call_args_list[0] # this line to get the event body
+        args, kwargs = mock_api.acl.return_value.insert.call_args_list[0] 
         self.assertEqual(kwargs.get('body').get('role'), "owner")
         self.assertEqual(kwargs.get('body').get('scope').get('value'), userEmail)
 
+    # test create reader ACL
     def test_create_reader(self):
         mock_api = MagicMock()
         calId = "123456789@gmail.com"
         userEmail = "lmao@gmail.com"
         events = MyEventManager.create_reader(mock_api,calId,userEmail)
         self.assertEqual(mock_api.acl.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        args, kwargs = mock_api.acl.return_value.insert.call_args_list[0] # this line to get the event body
+        args, kwargs = mock_api.acl.return_value.insert.call_args_list[0] 
         self.assertEqual(kwargs.get('body').get('role'), "reader")
         self.assertEqual(kwargs.get('body').get('scope').get('value'), userEmail)
 
+    # test create writer ACL
     def test_create_writer(self):
         mock_api = MagicMock()
         calId = "123456789@gmail.com"
         userEmail = "lmao@gmail.com"
         events = MyEventManager.create_writer(mock_api,calId,userEmail)
         self.assertEqual(mock_api.acl.return_value.insert.return_value.execute.return_value.get.call_count, 0)
-        args, kwargs = mock_api.acl.return_value.insert.call_args_list[0] # this line to get the event body
+        args, kwargs = mock_api.acl.return_value.insert.call_args_list[0] 
         self.assertEqual(kwargs.get('body').get('role'), "writer")
         self.assertEqual(kwargs.get('body').get('scope').get('value'), userEmail)
     
-
-        
     """ Coverage starts here """
     def test_get_upcoming_events_invalid_number(self):
         num_events = -1
