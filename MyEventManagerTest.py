@@ -38,14 +38,11 @@ class MyEventManagerTest(unittest.TestCase):
         args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
         self.assertEqual(kwargs.get('body').get('id'), id)
     
-    
     def test_print_events(self):
         mock_api = MagicMock()
         MyEventManager.print_events(mock_api, '2022-09-25T00:07:14+08:00', '2022-09-26T23:50:00+08:00')
         self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
         
-        
-    
     def test_insert_invalid_event(self):
         start_date = ""
         end_date = ""
@@ -282,6 +279,12 @@ class MyEventManagerTest(unittest.TestCase):
     # Condition coverage
     def test_invalid_email_format(self):
         email = "PEPEGA"
+        with self.assertRaises(ValueError):
+            MyEventManager.check_emailFormat(email)
+        email = "PEPEGA@hjello"
+        with self.assertRaises(ValueError):
+            MyEventManager.check_emailFormat(email)
+        email = "PEPEGA.weeeeeeeeeeeeee"
         with self.assertRaises(ValueError):
             MyEventManager.check_emailFormat(email)
     
