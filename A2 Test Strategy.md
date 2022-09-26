@@ -66,6 +66,7 @@ Branch Coverage
 Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
+
 For this test suite, we have chosen to test it in a form of branch coverage. Firstly for the function used to ensure the address format, we have tested out all the branches that covers the function, to ensure that every decision of the program is exercised once. In here, we tested all branches that leads to a valid address and also all branches that leads to an invalid address.
 
 Moving on, in the function used to ensure the valid date format and time format, branch coverage is also implemented as a testing technique, as similarly to the address format function, we have tested all possible branches that leads to a valid date and time format and also all decisions that leads to an invalid date and time format
