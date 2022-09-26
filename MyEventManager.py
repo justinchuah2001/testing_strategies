@@ -97,10 +97,11 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
         
     # add roles to attendees, also check the attendees email format
     attendeesFormat = []
-    for i in range (len(attendees)):
-        check_emailFormat(attendees[i])
-        create_reader(api, calID, attendees[i])
-        attendeesFormat.append({"email": attendees[i]})
+    if attendees != None:
+        for i in range (len(attendees)):
+            check_emailFormat(attendees[i])
+            create_reader(api, calID, attendees[i])
+            attendeesFormat.append({"email": attendees[i]})
 
     eventbody = {
                     "kind": "calendar#event",
@@ -312,7 +313,7 @@ def check_attendee_limit(attendees):
     """
     This function is to check whether the amount of attendees are within the accepted limits.
     """
-    if len(attendees) <= 20:
+    if attendees == None or len(attendees) <= 20:
         return attendees
     else:
         raise ValueError("There are too many attendees")
@@ -612,11 +613,15 @@ Input: """)
     return
 
 
-# def main():
+def main():
+    api = get_calendar_api()
+    # newevent2 = insert_event(api, 'primary', '2022-9-25','2022-9-25','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'gdd123gdd', 'ddd123ddd')
+    print_events(api, '2022-9-29T00:07:14+08:00', '2022-9-29T23:50:00+08:00')
+    # terminal_ui(api)
 #     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
 #     # address_check(address)
 #     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
-#     api = get_calendar_api()
+    #  api = get_calendar_api()
 #     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
 #     # terminal_ui(api)
 #     # events = get_upcoming_events(api, '2022-9-20T00:00:10+08:00', 10)
@@ -627,10 +632,9 @@ Input: """)
 #     #     start = event['start'].get('dateTime', event['start'].get('date'))
 #     #     print(start, event['summary'])
 #     # check_emailFormat("something@gmail.com")
-
-#     # newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
-#     # print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
-#     insert_event(api,'primary', '2022-9-23','2022-9-23','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'gggg123gg', ['loolipin0321@gmail.com'])
+    #  newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
+    #  print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+    # insert_event(api,'primary', '2022-9-29','2022-9-29','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'bbbbalsss', ['loolipin0321@gmail.com'])
 #     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
 #     # import_event(api)
 #     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
@@ -650,5 +654,5 @@ Input: """)
 #     # print(newevent4.get('attendees'))
 #     # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
 #     # print(newevent5.get('attendees'))
-# if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
-#     main()
+if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
+    main()
