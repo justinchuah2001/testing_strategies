@@ -70,10 +70,11 @@ Moving on, in the function used to ensure the valid date format and time format,
 
 **Test 1**
 **Ensure Valid Address Format Function**\
-**Description**\
+**Description:**\
 This test suite is to test the function that checks the address to make sure that it is in the correct format.\
+
 **Provided Input with Expected and Actual Output.**\
-***Test Frame 1***
+***Test Frame 1***\ 
 Test Case 1: 
 Input: 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA' \
 Expected Output: True \
@@ -111,10 +112,11 @@ Actual Output: ValueError()\
 
 **Test 2**
 **Ensure Valid Date Format Function**\
-**Description**\
+**Description:**\
 This test suite is to test the function that checks the date to make sure that it is in the correct format.\
+
 **Provided Input with Expected and Actual Output.**\
-***Test Frame 1***
+***Test Frame 1***\
 Test Case 1:
 Input: starting_date = '2022-8-4' | ending_date = '2022-9-4'\
 Expected Output: True\
@@ -152,10 +154,11 @@ Actual Output: ValueError()\
 
 **Test 3**
 **Ensure Time Format Function**\
-**Description**\
+**Description:**\
 This test suite is to test the function that checks the time to make sure that it is in the correct format.\
+
 **Provided Input with Expected and Actual Output.**\
-***Test Frame 1***
+***Test Frame 1***\
 Test Case 1:
 Input: starttime = '9:6:23' \
 Expected Output: True\
