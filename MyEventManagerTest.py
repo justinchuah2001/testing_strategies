@@ -1,4 +1,5 @@
 from datetime import datetime
+from json import JSONDecodeError
 import unittest
 from unittest import mock
 from unittest.mock import MagicMock, Mock, patch, call
@@ -98,59 +99,104 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(kwargs.get('timeMin'), starting_time)
         self.assertEqual(kwargs.get('timeMax'), ending_time)
 
-    def test_update_event(self):
-        # insert an event before updating the event
-        start_date = "2022-09-25"
-        end_date = "2022-09-26"
-        start_time = "20:06:14"
-        end_time = "20:06:14"
-        id = '753951'
-        event_name = 'PEPEGA'
-        location = ""
-        calID = "123456@gmail.com"
-        attendees = ["23456@gmail.com"]
+    # def test_update_event(self):
+    #     # event details
+    #     start_date = "2022-09-25"
+    #     end_date = "2022-09-26"
+    #     start_time = "20:06:14"
+    #     end_time = "20:06:14"
+    #     id = '753951'
+    #     event_name = 'PEPEGA'
+    #     location = ""
+    #     calID = "123456@gmail.com"
+    #     attendees = [{"23456@gmail.com"}]
+    #     status = "confirmed"
+    #     eventbody = {
+    #                 "kind": "calendar#event",
+    #                 "id": id,
+    #                 "summary": event_name,
+    #                 "description": 'test add',
+    #                 "location": location,
+    #                 "status": status,
+    #                 "organizer":{
+    #                     "email": calID
+    #                 },
+    #                 "start": {
+    #                     "dateTime": start_date+"T"+start_time+"08:00"
+    #                 },
+    #                 "end": {
+    #                     "dateTime": end_date+"T"+end_time+"08:00"
+    #                 },
+    #                 "attendees": attendees,
+    #                 "guestsCanInviteOthers": 'False',
+    #                 "guestsCanModify": 'False',
+    #                 "guestsCanSeeOtherGuests": 'True',
+    #                 "reminders": {
+    #                     "useDefault": 'False',
+    #                     "overrides": [
+    #                         {'method': 'popup', 'minutes': 30}
+    #                     ]
+    #                 },
+    #                 "eventType": 'default'
+    #             }
+    #     mock_api = MagicMock()
+    #     events = MyEventManager.update_event(mock_api, calID, id, start_date, end_date, event_name, start_time, end_time, location, status ,attendees) 
 
+    # def test_delete_event(self):
+    #     # event details
+    #     start_date = "2022-09-25"
+    #     end_date = "2022-09-26"
+    #     start_time = "20:06:14"
+    #     end_time = "20:06:14"
+    #     id = '753951'
+    #     event_name = 'PEPEGA'
+    #     location = ""
+    #     calID = "123456@gmail.com"
+    #     attendees = [{"23456@gmail.com"}]
+    #     status = "confirmed"
+    #     eventbody = {
+    #                 "kind": "calendar#event",
+    #                 "id": id,
+    #                 "summary": event_name,
+    #                 "description": 'test add',
+    #                 "location": location,
+    #                 "status": status,
+    #                 "organizer":{
+    #                     "email": calID
+    #                 },
+    #                 "start": {
+    #                     "dateTime": start_date+"T"+start_time+"08:00"
+    #                 },
+    #                 "end": {
+    #                     "dateTime": end_date+"T"+end_time+"08:00"
+    #                 },
+    #                 "attendees": attendees,
+    #                 "guestsCanInviteOthers": 'False',
+    #                 "guestsCanModify": 'False',
+    #                 "guestsCanSeeOtherGuests": 'True',
+    #                 "reminders": {
+    #                     "useDefault": 'False',
+    #                     "overrides": [
+    #                         {'method': 'popup', 'minutes': 30}
+    #                     ]
+    #                 },
+    #                 "eventType": 'default'
+    #             }
+    #     mock_api = MagicMock(name=eventbody)
+    #     events = MyEventManager.delete_events(mock_api, calID, id) 
+
+    def test_export_events(self):
+        starting_time = '2022-9-20T00:00:10+8:00'
+        ending_time = '2022-9-20T00:00:10+8:00'
         mock_api = MagicMock()
-        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+        with self.assertRaises(TypeError):
+            MyEventManager.export_event(mock_api, starting_time, ending_time) 
 
-        # justification: assume all the credentials are valid and formats are all correct before updating the events
-        start_date = "2022-09-27"
-        end_date = "2022-09-28"
-        start_time = "20:04:14"
-        end_time = "22:08:14"
-        id = '753951'
-        event_name = 'PEPEGA'
-        location = ""
-        calID = "123456@gmail.com"
-        attendees = []
-        eventbody = {
-                "kind": "calendar#event",
-                "id": id,
-                "summary": event_name,
-                "description": 'test add',
-                "location": location,
-                "start": {
-                    "dateTime": start_date+"T"+start_time+"+08:00"
-                },
-                "end": {
-                    "dateTime": end_date+"T"+end_time+"+08:00"
-                },
-                "attendees": attendees,
-                "guestsCanInviteOthers": 'False',
-                "guestsCanModify": 'False',
-                "guestsCanSeeOtherGuests": 'True',
-                "reminders": {
-                    "useDefault": 'False',
-                    "overrides": [
-                        {'method': 'popup', 'minutes': 20}
-                    ]
-                },
-                "eventType": 'default'
-            }
-        # directly calling the functions
-        event = mock_api.events().update(calendarId=calID, eventId=id, body=eventbody).execute()
-        self.assertEqual(mock_api.events.return_value.update.return_value.execute.return_value.get.call_count, 0)
-    
+    def test_print_events(self):
+        mock_api = MagicMock()
+        MyEventManager.print_events(mock_api,"2022-09-25T00:07:14+08:00","2022-09-26T23:50:00+08:00")
+        self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count,0)
+
     def test_move_event(self):
         # insert an event before updating the event
         start_date = "2022-09-25"
@@ -235,9 +281,7 @@ class MyEventManagerTest(unittest.TestCase):
     def test_check_valid_details(self):
         calId = "113@gmail.com"
         mock_api = MagicMock()
-        events = MyEventManager.check_details(mock_api, calId)
-        args, kwargs = mock_api.acl.return_value.get.call_args_list[0]
-        self.assertEqual(kwargs.get("calendarId"), calId)
+        self.assertEqual(MyEventManager.check_details(calId, calId), True)
 
     # calId != calendarId retrived from event
     # only happens when non-organiser attempting to modify an event
@@ -247,9 +291,8 @@ class MyEventManagerTest(unittest.TestCase):
         calId = "113@gmail.com"
         otherId = "223@gmail.com"
         mock_api = MagicMock()
-        events = MyEventManager.check_details(mock_api, calId)
-        args, kwargs = mock_api.acl.return_value.get.call_args_list[0]
-        self.assertNotEqual(kwargs.get("calendarId"), otherId)
+        with self.assertRaises(ValueError): 
+            events = MyEventManager.check_details(calId, otherId)
 
     # email format is valid
     # Condition coverage
