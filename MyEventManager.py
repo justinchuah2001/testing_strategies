@@ -164,14 +164,14 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     # check whether the event to be modified is within modifiable range of date
     # check the calendarID of the current user
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
-    current_date = event['start']['datetime']
+    current_date = event['start']['dateTime']
     eventorg = event['organizer']['email']
     check_date(current_date)
     check_details(ownId,eventorg)
     check_emailFormat(ownId)
     # get current event details
-    newEventSDatetime = event['start']['datetime']
-    newEventEDatetime = event['end']['datetime']
+    newEventSDatetime = event['start']['dateTime']
+    newEventEDatetime = event['end']['dateTime']
     newEventLocation = event['location']
     newEventStatus = event['status']
     newEventName = event['summary']
@@ -184,7 +184,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     if newStartDate is not None and newEndDate is not None:
         if newStartDate == '' or newEndDate == '':
             raise ValueError("Start or end time must be a string.")
-        starting_date, ending_date = ensure_date_format(starting_date, ending_date)
+        starting_date, ending_date = ensure_date_format(newStartDate, newEndDate)
         ensure_time_format(newStartTime)
         ensure_time_format(newEndTime)
         start = starting_date + "T" + newStartTime + "+08:00"
@@ -212,10 +212,10 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
                 "location": newEventLocation,
                 "status": newEventStatus,
                 "start": {
-                    "dateTime": newEventEDatetime
+                    "dateTime": newEventSDatetime
                 },
                 "end": {
-                    "dateTime": newEventSDatetime
+                    "dateTime": newEventEDatetime
                 },
                 "attendees": newEventAttendees,
                 "guestsCanInviteOthers": 'False',
@@ -547,44 +547,31 @@ Input: """)
     return
 
 
-# def main():
-# #     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
-# #     # address_check(address)
-# #     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
-#      api = get_calendar_api()
-#      export_event(api, '_elkm8e1g')
-    #  import_event(api, 'primary')
-#     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-#     # terminal_ui(api)
-#     # events = get_upcoming_events(api, '2022-9-20T00:00:10+08:00', 10)
-
-#     # if not events:
-#     #     print('No upcoming events found.')
-#     # for event in events:
-#     #     start = event['start'].get('dateTime', event['start'].get('date'))
-#     #     print(start, event['summary'])
-#     # check_emailFormat("something@gmail.com")
-    #  newevent2 = insert_event(api,'2022-9-22','2022-9-22','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'ddd', 'ddd123ddd')
-    #  print(ensure_date_format('2022-SEP-20', '2022-SEP-20'))
+def main():
+#     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
+#     # address_check(address)
+#     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
+    api = get_calendar_api()
     # insert_event(api,'primary', '2022-9-29','2022-9-29','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'bbbbalsss', ['loolipin0321@gmail.com'])
-#     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
-#     # import_event(api)
-#     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
-#     # user_interface(api, time_now)
-#     # terminal_ui(api)
-#     # ensure_time_format('20:07:14')
-#     # delete_events(api, 'date12345')
-#     # print(newevent2.get('attendees'))
-#     # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
-#     # print(newevent3)
-#     # newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
-#     # print(newevent3)
-#     # newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
-#     # print(newevent3)
-#     # newevent4 = add_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
-#     # newevent4 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
-#     # print(newevent4.get('attendees'))
-#     # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
-#     # print(newevent5.get('attendees'))
-# if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
-#     main()
+    update_event(api,'jchu0057@student.monash.edu', 'bbbbalsss', '2022-9-29','2022-9-29', 'testPepega','00:08:14','23:55:00','online' , 'confirmed' , [])
+    # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
+    # import_event(api)
+    # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
+    # user_interface(api, time_now)
+    # terminal_ui(api)
+    # ensure_time_format('20:07:14')
+    # delete_events(api, 'date12345')
+    # print(newevent2.get('attendees'))
+    # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
+    # print(newevent3)
+    # newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
+    # print(newevent3)
+    # newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+    # print(newevent3)
+    # newevent4 = add_attendee(api,'primary','1`2`34689','ghua0010@student.monash.edu')
+    # newevent4 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+    # print(newevent4.get('attendees'))
+    # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
+    # print(newevent5.get('attendees'))
+if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
+    main()
