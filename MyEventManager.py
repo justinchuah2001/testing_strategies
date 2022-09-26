@@ -550,7 +550,8 @@ Input: """)
     return
 
 
-# def main():
+def main():
+    ensure_time_format('20:06:14')
 # #     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
 # #     # address_check(address)
 # #     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
@@ -589,5 +590,5 @@ Input: """)
 #     # print(newevent4.get('attendees'))
 #     # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
 #     # print(newevent5.get('attendees'))
-# if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
-#     main()
+if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
+    main()
