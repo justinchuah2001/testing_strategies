@@ -54,9 +54,13 @@ For spec 6, the application should support importing and exporting of events in 
 ## Test Suite 1: Creation of Events
 
 ***Description:***
+
 In this test suite, we will have created all the necessary functions to ensure all the requirements in the specification is fulfilled.
+
 ***Testing method:*** 
+
 Branch Coverage
+
 ***Tester:***
 
 Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
@@ -66,7 +70,7 @@ For this test suite, we have chosen to test it in a form of branch coverage. Fir
 
 Moving on, in the function used to ensure the valid date format and time format, branch coverage is also implemented as a testing technique, as similarly to the address format function, we have tested all possible branches that leads to a valid date and time format and also all decisions that leads to an invalid date and time format
 
-**Testing**
+### Testing
 
 **Test 1**
 **Ensure Valid Address Format Function**\
@@ -190,7 +194,7 @@ Test suite 2 is created to test what the organizer of the event can do, such as 
 
 ***Testing method:*** 
 
-For this test suite, 
+Branch Coverage, condition coverage, statement coverage
 
 ***Tester:***
 
@@ -198,7 +202,28 @@ Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
 
+For this test suite, we have decided to use branch coverage, condition coverage and statement coverage to test the functions regarding to event organizers. 
 
+First, check_emailFormat is tested with branch coverage and condition coverage. This is to ensure the user is using a correct email format when attempting to create, or modify an event. Here, we tested all branches that lead to a wrong email format and also branches that lead to a correct email format. 
+
+Second, check_date function is tested with branch coverage, condition coverage and statement coverage. This allows us to cover all possible outcomes, as this function also contains ensure_time_format function, utilising what we have tested in test suite 1.
+
+### Testing
+
+**Test 1: Check Date Function**
+
+**Description:**
+
+This test frame is to test check_date function, a function that allows events only from today and till 2050 can be modified. 
+
+**Provided Input with Expected and Actual Output.**
+
+***Test Frame 1***
+
+| Test Case Input | Expected Output | Actual Output |
+| "2024-09-22T00:00:00+08:00" | True | True |
+| "2020-09-22T00:00:00+08:00" | ValueError() | ValueError() |
+| "2051-01-01T00:00:00+08:00" | ValueError() | ValueError() |
 
 ## Test Suite 3: Creation of Attendees
 
