@@ -414,33 +414,32 @@ def print_events(api, start_time, end_time):
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
     
-def export_event(api, starting_time, ending_time):
+def export_event(api, Id):
     """
     This is to export the event to a json format that allows it to be imported later on
     """
-    items = get_events(api, starting_time, ending_time)
- 
+    event = api.events().get(calendarId='primary', eventId=Id).execute()
     with open("output.json", "w") as outfile:
-        json.dump(items, outfile)
+        json.dump(event, outfile, indent = 4)
 
-def import_event(api):
+def import_event(api, calId):
     """
     This is to import the event to a json format
     """
     f = open('output.json')
+    print(f)
     data = json.load(f)
-    calID = 'primary'
-    for i in data:
-        startDateTime = i['start']['dateTime']
-        endDateTime = i['end']['dateTime']
-        event_location = i['location']
-        event_name = i['summary']
-        id = i['id']
-        startDate = startDateTime.split("T")
-        endDate = endDateTime.split("T")
-        startTime = startDate[1].split("+")
-        endTime = endDate[1].split("+")
-        insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
+    calID = calId
+    startDateTime = data['start']['dateTime']
+    endDateTime = data['end']['dateTime']
+    event_location = data['location']
+    event_name = data['summary']
+    id = data['id']
+    startDate = startDateTime.split("T")
+    endDate = endDateTime.split("T")
+    startTime = startDate[1].split("+")
+    endTime = endDate[1].split("+")
+    insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
 
 
 def terminal_ui (api):
@@ -552,10 +551,12 @@ Input: """)
 
 
 # def main():
-#     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
-#     # address_check(address)
-#     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
-    #  api = get_calendar_api()
+# #     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
+# #     # address_check(address)
+# #     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
+#      api = get_calendar_api()
+#      export_event(api, '_elkm8e1g')
+    #  import_event(api, 'primary')
 #     # time_now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
 #     # terminal_ui(api)
 #     # events = get_upcoming_events(api, '2022-9-20T00:00:10+08:00', 10)
