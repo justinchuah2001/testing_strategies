@@ -166,6 +166,7 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
     current_date = event['start']['dateTime']
     eventorg = event['organizer']['email']
+    print(current_date)
     check_date(current_date)
     check_details(ownId,eventorg)
     check_emailFormat(ownId)
