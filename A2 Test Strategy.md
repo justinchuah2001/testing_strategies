@@ -290,9 +290,7 @@ This test suite is to test the function that checks the number of attendees to m
 | Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
 | --- | --- | --- | --- |
 | 1 | attendees= ['john@gmail.com', 'hi@gmail.com'] = "2022-09-25" | True | True |
-| 2 | attendees= ['john@gmail.com', 'hi@gmail.com', '1@gmail.com', '2@gmail.com', '3@gmail.com', '4@gmail.com', '5@gmail,com', '6@gmail.com'
-        '7@gmail.com', '8@gmail.com', '9@gmail.com', '10@gmail.com', '13@gmail.com', '14@gmail.com', '15@gmail.com', '16@gmail.com', '17@gmail.com', 
-        '18@gmail.com', '19@gmail.com', '20@gmail.com', '12@gmail.com', '21@gmail.com' ] | ValueError() | ValueError() |
+| 2 | attendees= ['john@gmail.com', 'hi@gmail.com', '1@gmail.com', '2@gmail.com', '3@gmail.com', '4@gmail.com', '5@gmail,com', '6@gmail.com', '7@gmail.com', '8@gmail.com', '9@gmail.com', '10@gmail.com', '13@gmail.com', '14@gmail.com', '15@gmail.com', '16@gmail.com', '17@gmail.com', '18@gmail.com', '19@gmail.com', '20@gmail.com', '12@gmail.com', '21@gmail.com' ] | ValueError() | ValueError() |
 
 ## Test Suite 4: Testing of Reminders(Notifications)
 
