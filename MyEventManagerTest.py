@@ -96,6 +96,51 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(kwargs.get('timeMin'), starting_time)
         self.assertEqual(kwargs.get('timeMax'), ending_time)
 
+
+
+    # def test_delete_event(self):
+    #     # event details
+    #     start_date = "2022-09-25"
+    #     end_date = "2022-09-26"
+    #     start_time = "20:06:14"
+    #     end_time = "20:06:14"
+    #     id = '753951'
+    #     event_name = 'PEPEGA'
+    #     location = ""
+    #     calID = "123456@gmail.com"
+    #     attendees = [{"23456@gmail.com"}]
+    #     status = "confirmed"
+    #     eventbody = {
+    #                 "kind": "calendar#event",
+    #                 "id": id,
+    #                 "summary": event_name,
+    #                 "description": 'test add',
+    #                 "location": location,
+    #                 "status": status,
+    #                 "organizer":{
+    #                     "email": calID
+    #                 },
+    #                 "start": {
+    #                     "dateTime": start_date+"T"+start_time+"08:00"
+    #                 },
+    #                 "end": {
+    #                     "dateTime": end_date+"T"+end_time+"08:00"
+    #                 },
+    #                 "attendees": attendees,
+    #                 "guestsCanInviteOthers": 'False',
+    #                 "guestsCanModify": 'False',
+    #                 "guestsCanSeeOtherGuests": 'True',
+    #                 "reminders": {
+    #                     "useDefault": 'False',
+    #                     "overrides": [
+    #                         {'method': 'popup', 'minutes': 30}
+    #                     ]
+    #                 },
+    #                 "eventType": 'default'
+    #             }
+    #     mock_api = MagicMock(name=eventbody)
+    #     events = MyEventManager.delete_events(mock_api, calID, id) 
+
     def test_delete_event(self):
         calId = '123@gmail.com'
         Id = '753951'
@@ -104,13 +149,14 @@ class MyEventManagerTest(unittest.TestCase):
             MyEventManager.delete_events(mock_api, calId, Id) 
         self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count,1)
 
+
     def test_export_events(self):
         starting_time = '2022-9-20T00:00:10+8:00'
         ending_time = '2022-9-20T00:00:10+8:00'
         mock_api = MagicMock()
         with self.assertRaises(TypeError):
             MyEventManager.export_event(mock_api, starting_time, ending_time) 
-    
+        
     def test_import_events(self):
         calId = "123@gmail.com"
         mock_api = MagicMock()
