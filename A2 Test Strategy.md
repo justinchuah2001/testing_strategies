@@ -73,9 +73,7 @@ Moving on, in the function used to ensure the valid date format and time format,
 
 ### Testing
 
-**Test 1**
-
-**Ensure Valid Address Format Function**
+**Test 1: address_check Function**
 
 **Description:**
 
@@ -95,9 +93,7 @@ This test suite is to test the function that checks the address to make sure tha
 | 6 | '52KL' | ValueError() | ValueError() |
 | 7 | 'Mrs Smith 546 Fake St. Clayton 3400 A' | ValueError() | ValueError() |
 
-**Test 2**
-
-**Ensure Valid Date Format Function**
+**Test 2: ensure_date_format Function**
 
 **Description:**
 
@@ -117,9 +113,7 @@ This test suite is to test the function that checks the date to make sure that i
 | 6 | ('22-9-4', '22-12-4') | ValueError() | ValueError() |
 | 7 | ('2-9-19', '13-12-21') | ValueError() | ValueError() |
 
-**Test 3**
-
-**Ensure Time Format Function**
+**Test 3: ensure_time_format Function**
 
 **Description:**
 
@@ -158,11 +152,17 @@ First, check_emailFormat is tested with branch coverage and condition coverage. 
 
 Second, check_date function is tested with branch coverage, condition coverage and statement coverage. This allows us to cover all possible outcomes, as this function also contains ensure_time_format function, utilising what we have tested in test suite 1.
 
-Third, check_details function is tested with branch coverage and condition coverage. This allows us to cover all possible outcomes. 
+Third, check_details function is tested with branch coverage and condition coverage. This allows us to cover all possible outcomes.
+
+Fourth, insert_event is tested with mocking. For insert_event function, we've tested with branch coverage and condition coverage also, to ensure all branches and possibilities are covered. Within insert_event function, it contains other check functions like ensure_time_format, address_check, check_attendees_limit, and more. These functions are also covered in other test suites, with their own respective test methods.
+
+Fifth, delete_event is tested with mocking. Since we can't test delete_event with actual events, we tested such that it will raise TypeError. This is to ensure the function is executed as intended, and such branch is also covered as well. 
+
+Sixth, move_event is tested with mocking. Similar to delete_event, since testing moving event to other user couldn't be tested, we decided to test its call count to ensure the function is executed. 
 
 ### Testing
 
-**Test 1: Check Email Function**
+**Test 1: check_emailFormat Function**
 
 **Description:**
 
@@ -180,7 +180,7 @@ This test frame is to test check_emailFormat function, a function that checks if
 | 4 | "PEPEGA@hjello" | ValueError() | ValueError() |
 | 5 | "PEPEGA.weeeeeeeeeeeeee" | ValueError() | ValueError() |
 
-**Test 2: Check Date Function**
+**Test 2: check_date Function**
 
 **Description:**
 
@@ -196,7 +196,7 @@ This test frame is to test check_date function, a function that allows events on
 | 2 | "2020-09-22T00:00:00+08:00" | ValueError() | ValueError() |
 | 3 | "2051-01-01T00:00:00+08:00" | ValueError() | ValueError() |
 
-**Test 3: Check Details Function**
+**Test 3: check_details Function**
 
 **Description:**
 
@@ -210,6 +210,46 @@ This test frame is to test check_details function, a function that allows event 
 | --- | --- | --- | --- |
 | 1 | ("113@gmail.com", "113@gmail.com") | True | True |
 | 2 | ("113@gmail.com","223@gmail.com") | ValueError() | ValueError() |
+
+**Test 4: insert_event Function**
+
+**Description:**
+
+This test frame is to test insert_event function, a function that allows a user to create an event and become organizer of the event.
+
+**Provided Input with Expected and Actual Output.**
+
+***Test Frame 1***
+
+| Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | start_date = "2022-09-25" <br>
+        end_date = "2022-09-26" <br>
+        start_time = "20:06:14" <br> 
+        end_time = "20:06:14" <br>
+        id = '753951' <br>
+        event_name = 'PEPEGA' <br>
+        location = "" <br>
+        calID = "123456@gmail.com" <br>
+        attendees = ["23456@gmail.com"] | True (event resource id == id) | True (event resource id == id) |
+| 2 | start_date = "" <br>
+        end_date = "" <br>
+        start_time = "20:06:14" <br> 
+        end_time = "20:06:14" <br>
+        id = '753951' <br>
+        event_name = 'PEPEGA' <br>
+        location = "" <br>
+        calID = "123456@gmail.com" <br>
+        attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
+| 3 | start_date =  "2022-09-25" <br>
+        end_date = "2022-09-26" <br>
+        start_time = "20:06:14" <br> 
+        end_time = "20:06:14" <br>
+        id = '1' <br>
+        event_name = 'PEPEGA' <br>
+        location = "" <br>
+        calID = "123456@gmail.com" <br>
+        attendees = ["23456@gmail.com"] | ValueError() | ValueError() |
 
 ## Test Suite 3: Creation of Attendees
 
