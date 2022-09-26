@@ -223,15 +223,7 @@ This test frame is to test insert_event function, a function that allows a user 
 
 | Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
 | --- | --- | --- | --- |
-| 1 | * start_date = "2022-09-25" 
-     * end_date = "2022-09-26" 
-     * start_time = "20:06:14" 
-     * end_time = "20:06:14" 
-     * id = '753951' 
-     * event_name = 'PEPEGA' 
-     * location = "" 
-     * calID = "123456@gmail.com" 
-     * attendees = ["23456@gmail.com"] | True (event resource id == id) | True (event resource id == id) |
+| 1 | * start_date = "2022-09-25" * end_date = "2022-09-26" * start_time = "20:06:14" * end_time = "20:06:14" * id = '753951' * event_name = 'PEPEGA' * location = "" * calID = "123456@gmail.com" * attendees = ["23456@gmail.com"] | True (event resource id == id) | True (event resource id == id) |
 | 2 | * start_date = "" 
      * end_date = "" 
      * start_time = "20:06:14" 
