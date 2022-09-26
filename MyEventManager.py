@@ -262,7 +262,6 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
                     },
                     "eventType": 'default'
                 }
-
     events_result = api.events().insert(calendarId=calID, body=eventbody, sendUpdates='all').execute()
     return events_result
 
@@ -290,7 +289,6 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
     current_date = event['start']['dateTime']
     eventorg = event['organizer']['email']
-    print(current_date)
     check_date(current_date)
     check_details(ownId,eventorg)
     check_emailFormat(ownId)
@@ -470,7 +468,6 @@ def get_events(api, starting_time, ending_time):
     Shows basic usage of the Google Calendar API.
     Prints the start and name of the next n events on the user's calendar.
     """
-
     events_result = api.events().list(calendarId='primary', timeMin=starting_time, timeMax=ending_time, singleEvents=True,
                                       orderBy='startTime').execute()
     return events_result.get('items', [])
@@ -628,32 +625,32 @@ def import_event(api, calId):
     endTime = endDate[1].split("+")
     insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
 
-def main():
-#     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
-#     # address_check(address)
-#     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
-    api = get_calendar_api()
-    terminal_ui(api)
-    # insert_event(api,'primary', '2022-9-29','2022-9-29','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'bbbbalsss', ['loolipin0321@gmail.com'])
-    # update_event(api,'jchu0057@student.monash.edu', 'bbbbalsss', '2022-9-29','2022-9-29', 'testPepega','00:08:14','23:55:00','online' , 'confirmed' , [])
-    # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
-    # import_event(api)
-    # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
-    # user_interface(api, time_now)
-    # terminal_ui(api)
-    # ensure_time_format('20:07:14')
-    # delete_events(api, 'date12345')
-    # print(newevent2.get('attendees'))
-    # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
-    # print(newevent3)
-    # newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
-    # print(newevent3)
-    # newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
-    # print(newevent3)
-    # newevent4 = add_attendee(api,'primary','1`2`34689','ghua0010@student.monash.edu')
-    # newevent4 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
-    # print(newevent4.get('attendees'))
-    # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
-    # print(newevent5.get('attendees'))
-if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
-    main()
+# def main():
+# #     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
+# #     # address_check(address)
+# #     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
+#     api = get_calendar_api()
+#     terminal_ui(api)
+#     # insert_event(api,'primary', '2022-9-29','2022-9-29','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'bbbbalsss', ['loolipin0321@gmail.com'])
+#     # update_event(api,'jchu0057@student.monash.edu', 'bbbbalsss', '2022-9-29','2022-9-29', 'testPepega','00:08:14','23:55:00','online' , 'confirmed' , [])
+#     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
+#     # import_event(api)
+#     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
+#     # user_interface(api, time_now)
+#     # terminal_ui(api)
+#     # ensure_time_format('20:07:14')
+#     # delete_events(api, 'date12345')
+#     # print(newevent2.get('attendees'))
+#     # newevent3 = move_event(api, 'primary','lloo0007@student.monash.edu','123456789')
+#     # print(newevent3)
+#     # newevent3 = api.events().get(calendarId='primary', eventId='1234689').execute()
+#     # print(newevent3)
+#     # newevent3 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+#     # print(newevent3)
+#     # newevent4 = add_attendee(api,'primary','1`2`34689','ghua0010@student.monash.edu')
+#     # newevent4 = add_attendee(api,'primary','1234689','lloo0007@student.monash.edu')
+#     # print(newevent4.get('attendees'))
+#     # newevent5 = remove_attendee(api,'primary','1234689','ghua0010@student.monash.edu')
+#     # print(newevent5.get('attendees'))
+# if __name__ == "__main__":  # Prevents the main() function from being called by the test suite runner
+#     main()
