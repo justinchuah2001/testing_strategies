@@ -443,7 +443,7 @@ def import_event(api):
         insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
 
 
-def terminal_ui (api):
+def terminal_ui (api): #pragma: no cover
     """
     This is the user interface to show how the navigation works
     """
