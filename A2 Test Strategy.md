@@ -288,7 +288,7 @@ This test suite is to test the function that checks the number of attendees to m
 
 ***Test Frame 1***
 
-| Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
+| Test Case No | Input | Expected Output | Actual Output |
 | --- | --- | --- | --- |
 | 1 | attendees= ['john@gmail.com', 'hi@gmail.com'] = "2022-09-25" | True | True |
 | 2 | attendees= ['john@gmail.com', 'hi@gmail.com', '1@gmail.com', '2@gmail.com', '3@gmail.com', '4@gmail.com', '5@gmail,com', '6@gmail.com', '7@gmail.com', '8@gmail.com', '9@gmail.com', '10@gmail.com', '13@gmail.com', '14@gmail.com', '15@gmail.com', '16@gmail.com', '17@gmail.com', '18@gmail.com', '19@gmail.com', '20@gmail.com', '12@gmail.com', '21@gmail.com' ] | ValueError() | ValueError() |
@@ -330,33 +330,12 @@ In this test suite, we have made use of condition coverage and statement coverag
 An event is searched through mocking which checks if the input event title is present. 
 
 ***Test Frame 1***
-Test Case 1:
-Input: api = mock_api | query = "parallel"\
-Expected Output: True (q == query)\
-Actual Output: True (q == query)
 
-Test Case 2:
-Input: api = mock_api | query = "online"\
-Expected Output: True (q == query)\
-Actual Output: True (q == query)\
-
-Test Case 1:
-Input: api = mock_api | calId = ""\
-Expected Output: True (q == query)\
-Actual Output: True (kwargs == [])\
-
-**Test 2: Export Event Function**
-
-**Description:**
-
-An event is imported through mocking
-
-***Test Frame 1***
-Test Case 1:
-Input: api = mock_api | starting_time = "2022-9-20T00:00:10+8:00" | ending_time = "2022-9-20T00:00:10+8:00"
-Expected Output: Event is exported
-Actual Output: TypeError()
-
+| Test Case No | Input (api, query) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | (mock_api, "parallel") | True (q == query) | True (q == query) |
+| 2 | (mock_api, "online") | True (q == query) | True (q == query) |
+| 3 | (mock_api, "") | True (q == query) | True (kwargs == []) |
 
 ## Test Suite 6: Testing the import and export of event
 
@@ -385,10 +364,10 @@ We tested the import and export functions through mocking which is used to simul
 An event is imported through mocking
 
 ***Test Frame 1***
-Test Case 1:
-Input: api = mock_api | calId = "123@gmail.com"\
-Expected Output: True (call_count == 0)\
-Actual Output: True (call_count == 0)
+
+| Test Case No | Input (api, calendarId) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | (mock_api, "123@gmail.com") | True (call_count == 0) | True (call_count == 0) |
 
 **Test 2: Export Event Function**
 
@@ -397,10 +376,10 @@ Actual Output: True (call_count == 0)
 An event is exported through mocking
 
 ***Test Frame 1***
-Test Case 1:
-Input: api = mock_api | starting_time = "2022-9-20T00:00:10+8:00" | ending_time = "2022-9-20T00:00:10+8:00"
-Expected Output: Event is exported
-Actual Output: TypeError()
+
+| Test Case No | Input (api, starting_time, ending_time) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | (mock_api, "2022-9-20T00:00:10+8:00", "2022-9-20T00:00:10+8:00") | Event is exported | TypeError() |
 
 
 
