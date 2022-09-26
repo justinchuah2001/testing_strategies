@@ -75,7 +75,7 @@ def get_upcoming_events(api, starting_time, number_of_events):
     return events_result.get('items', [])
 
 # test insert()
-def insert_event(api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees = None):
+def insert_event(api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees):
     # checks the start end date format (yyyy-mm-dd || dd-MON-yy), id format, and time format (24hr)
     if (starting_date == '') or (ending_date == ''):
         raise ValueError("Start or end time must be a string.")
