@@ -166,7 +166,6 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     event = api.events().get(calendarId=ownId, eventId=eventId).execute()
     current_date = event['start']['datetime']
     eventorg = event['organizer']['email']
-    print(eventorg)
     check_date(current_date)
     check_details(ownId,eventorg)
     check_emailFormat(ownId)
@@ -244,7 +243,6 @@ def move_event(api, originalId, newId, eventId):
 def delete_events(api, calId, Id):
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
     event = api.events().get(calendarId=calId, eventId = Id).execute()
-    # print(event)
     if event.get('end').get('datetime') > time_now:
         raise ValueError("Only past events can be deleted")
     else:
@@ -427,7 +425,6 @@ def import_event(api, calId):
     This is to import the event to a json format
     """
     f = open('output.json')
-    print(f)
     data = json.load(f)
     calID = calId
     startDateTime = data['start']['dateTime']
