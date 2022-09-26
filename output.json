@@ -1,0 +1,34 @@
+{
+    "kind": "calendar#event",
+    "etag": "\"3326250592136000\"",
+    "id": "_elkm8e1g",
+    "status": "confirmed",
+    "htmlLink": "https://www.google.com/calendar/event?eid=X2Vsa204ZTFnIGxsb28wMDA3QHN0dWRlbnQubW9uYXNoLmVkdQ",
+    "created": "2022-09-14T03:14:31.000Z",
+    "updated": "2022-09-14T03:14:56.068Z",
+    "summary": "COMP SC PROJ 2, Tutorial",
+    "description": "FIT3162_MA_S2_ON-CAMPUS, Tutorial, 03\nCOMP SC PROJ 2\nStaff: Dr Lay Ki Soon\nLocation: MA_Seminar_Room_6216",
+    "location": "",
+    "creator": {
+        "email": "lloo0007@student.monash.edu",
+        "self": true
+    },
+    "organizer": {
+        "email": "lloo0007@student.monash.edu",
+        "self": true
+    },
+    "start": {
+        "dateTime": "2022-09-21T10:00:00+08:00",
+        "timeZone": "Asia/Singapore"
+    },
+    "end": {
+        "dateTime": "2022-09-21T12:00:00+08:00",
+        "timeZone": "Asia/Singapore"
+    },
+    "iCalUID": "uid80",
+    "sequence": 0,
+    "reminders": {
+        "useDefault": true
+    },
+    "eventType": "default"
+}
