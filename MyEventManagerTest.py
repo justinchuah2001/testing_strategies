@@ -96,6 +96,7 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(kwargs.get('timeMin'), starting_time)
         self.assertEqual(kwargs.get('timeMax'), ending_time)
 
+
     def test_delete_event(self):
         calId = '123@gmail.com'
         Id = '753951'
@@ -104,6 +105,23 @@ class MyEventManagerTest(unittest.TestCase):
             MyEventManager.delete_events(mock_api, calId, Id) 
         self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count,1)
 
+    def test_reminders(self):
+        start_date = "2022-09-25"
+        end_date = "2022-09-26"
+        start_time = "20:06:14"
+        end_time = "20:06:14"
+        id = '753951'
+        event_name = 'PEPEGA'
+        location = ""
+        calID = "123456@gmail.com"
+        attendees = ["23456@gmail.com"]
+        reminder = 30
+
+        mock_api = MagicMock()
+        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees) #i don't understand but ok
+        self.assertEqual(mock_api.events.return_value.insert.return_value.execute.return_value.get.call_count, 0)
+        args, kwargs = mock_api.events.return_value.insert.call_args_list[0] # this line to get the event body
+        self.assertEqual(kwargs.get('body').get('reminders').get('overrides')[0].get('minutes'), reminder)
 
     def test_export_events(self):
         starting_time = '2022-9-20T00:00:10+8:00'
