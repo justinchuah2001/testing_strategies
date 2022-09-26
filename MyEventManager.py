@@ -37,6 +37,8 @@ regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 def address_check(location):
     """
     This is to ensure that the address input is within the accepted time format of the US or Australian format
+    Input: location
+    Output: True if Valid location, False if online location
     """
     if location.upper() == 'ONLINE' or location == '':
         return False
@@ -62,7 +64,9 @@ def address_check(location):
 def ensure_date_format(start_date, end_date = None):
     """
     This function is to make sure that the date format input is only in the 2 accepted formats
-    which are %d-%b-%y and %Y-%m-%d
+    which are %d-%b-%y and %Y-%m-%d will raise an error if the dates aren't in the accepted formats
+    Input: start_date, end_date
+    Output: formatted start_date and end_date
     """
     try:
         datetime.datetime.strptime(start_date, '%d-%b-%y')
@@ -96,6 +100,9 @@ def ensure_date_format(start_date, end_date = None):
 def ensure_time_format(time):
     """
     This is to ensure that the time format is within the accepted time format of %H:%M:%S
+    Will raise an error if time not in accepted format
+    Input: time
+    Output: True if time is in the correct format
     """
     try:
         time == datetime.datetime.strptime(time, '%H:%M:%S')
@@ -145,8 +152,13 @@ def get_upcoming_events(api, starting_time, number_of_events):
                                       orderBy='startTime').execute()
     return events_result.get('items', [])
 
-# function to check if the current event needed to be updated is valid today till 2050
+
 def check_date(startDate):
+    """
+    This function to check if the current event needed to be updated is valid today till 2050
+    Input: startDate
+    Output: True of the date is valid
+    """
     date = startDate.split("T")[0]
     time = startDate.split("T")[1].split("+")[0]
     ensure_time_format(time)
@@ -159,12 +171,22 @@ def check_date(startDate):
         raise ValueError("Can only modify events that are present and max year 2050")
 
 def check_details(ownCalendarId, eventorgId):
+    """
+    To ensure that only the event organizer can access and manage the calendar's details
+    Input: ownCalendarId, eventorgId where ownCalendarId is the calendar's ID and eventorgId is the organizer's ID
+    Output: True if organizer is accessing the event
+    """
     if ownCalendarId == eventorgId:
         return True
     else:
         raise ValueError("Only organiser of the event can manage the event details!")
 
 def check_emailFormat(email):
+    """
+    To ensure that the input email is in the correct format by matching the regular expression
+    Input: email
+    Output: True if email format is valid
+    """
     if email == "primary":
         return True
     if(re.fullmatch(regex, email)):
@@ -173,6 +195,22 @@ def check_emailFormat(email):
         raise ValueError("Email format is incorrect.")
 
 def insert_event(api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees = None):
+    """
+    Allows insertion of event in the calendar
+    Input: api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees
+    Where
+    api = The api of google calendar
+    calID = The ID of the calendar to insert to
+    starting_date = The starting date of the event
+    ending_date = The ending date of the event
+    start_time = The starting time of the event
+    end_time = The ending time of the event
+    event_location = The location where the event will be held
+    event_name = The title of the event
+    id = The ID of the inserted event
+    attendees = The attendees in a form of list
+    Output: None
+    """
     # checks the start end date format (yyyy-mm-dd || dd-MON-yy), id format, and time format (24hr)
     if (starting_date == '') or (ending_date == ''):
         raise ValueError("Start or end time must be a string.")
@@ -229,6 +267,23 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
     return events_result
 
 def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees):
+    """
+    Allows updating existing events in the calendar. Here the user will be able to change the time of the event, add or remove attendees of the event and also update the location
+    Input: api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees
+    Where -
+    api = The api of google calendar
+    ownId = The id of the owner
+    eventId = The id of the event
+    newStartDate = The starting date of the event
+    newEndDate = The ending date of the event
+    newStartTime = The starting time of the event
+    newEndTime = The ending time of the event
+    newLocation = The location where the event will be held
+    newName = The title of the event
+    newStatus = The status of the event
+    newAttendees = New attendees
+    Output: None
+    """
     # check if the user requesting to modify the event is the organizer of the event
     # check whether the event to be modified is within modifiable range of date
     # check the calendarID of the current user
@@ -304,11 +359,26 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
 
 # only works with personal email
 def move_event(api, originalId, newId, eventId):
+    """
+    Move an existing event to another calendar, allowing them to have a new organizer
+    Input: api, originalId, newId, eventId 
+    Where-
+    api = API of the Google Calendar
+    originalId = The id of the calendar you want to move from
+    newId = The id of the calendar you want to move to
+    eventId = The id of the event you want to move organizers to
+    Output: new event
+    """
     # the authentication popped, choose the new calendar ID you wish to move to, NOT YOUR OWN CALENDAR
     events_result = api.events().move(calendarId=originalId, eventId=eventId, destination=newId).execute()
     return events_result
 
 def delete_events(api, calId, Id):
+    """
+    Allows the user to delete events, however the chosen event to delete can only be done if its in the past
+    Input: api, calId, Id
+    Output: None
+    """
     time_now = datetime.datetime.utcnow().isoformat() + 'Z'
     event = api.events().get(calendarId=calId, eventId = Id).execute()
     if event.get('end').get('datetime') > time_now:
@@ -321,6 +391,8 @@ def delete_events(api, calId, Id):
 def check_attendee_limit(attendees):
     """
     This function is to check whether the amount of attendees are within the accepted limits.
+    Input: attendees
+    Output: attendees
     """
     if attendees == None or len(attendees) <= 20:
         return attendees
@@ -330,6 +402,8 @@ def check_attendee_limit(attendees):
 def create_reader(api, calendarId, user_email):
     """
     To create the role of reader
+    Input: api, calendarId, user_email
+    Output: created_role
     """
     rolebody = {
         "role": "reader",
@@ -345,6 +419,8 @@ def create_reader(api, calendarId, user_email):
 def create_writer(api, calendarId, user_email):
     """
     To create the role of writer
+    Input: api, calendarId, user_email
+    Output: created_role
     """
     rolebody = {
         "role": "writer",
@@ -359,6 +435,8 @@ def create_writer(api, calendarId, user_email):
 def create_owner(api, calendarId, user_email):
     """
     To create the role of owner
+    Input: api, calendarId, user_email
+    Output: created_role
     """
     rolebody = {
         "role": "owner",
@@ -373,7 +451,9 @@ def create_owner(api, calendarId, user_email):
 """ test suite 5 """
 def search_event(api, query):
     """
-    This function allows the user to search for events
+    This function allows the user to search for events based on keywords of full event title
+    Input: api, query
+    Output: None
     """
     if query == None:
         return
@@ -398,17 +478,22 @@ def get_events(api, starting_time, ending_time):
 def print_events(api, start_time, end_time):
     """
     This function is called by the terminal user interface to print the events of desired date
+    Input: api, start_time, end_time
+    Output: None
     """
     events = get_events(api, start_time, end_time)
     if not events:
-        return 'No upcoming events found.'
+        print('No upcoming events found.')
+        return 
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
     
 def terminal_ui (api): #pragma: no cover
     """
-    This is the user interface to show how the navigation works
+    This is the user interface to show how the navigation works.
+    It has 2 functionalities, mainly a feature for the user to view the application either by year, month, day
+    or search for their desired event.
     """
     inp = None
     while inp != "q":
@@ -516,6 +601,8 @@ Input: """)
 def export_event(api, Id):
     """
     This is to export the event to a json format that allows it to be imported later on
+    Input: api, Id
+    Output: JSON file containing event details
     """
     event = api.events().get(calendarId='primary', eventId=Id).execute()
     with open("output.json", "w") as outfile:
@@ -523,7 +610,9 @@ def export_event(api, Id):
 
 def import_event(api, calId):
     """
-    This is to import the event to a json format
+    This is to import the event to a json format. By reading the json file, it will extract the required event details to insert to the calendar
+    Input: api, calId
+    Output: None
     """
     f = open('output.json')
     data = json.load(f)
@@ -544,8 +633,9 @@ def main():
 #     # address_check(address)
 #     # print(ensure_date_format('2022-SEP-20T20:06:14+08:00','2022-SEP-20T20:06:14+08:00'))
     api = get_calendar_api()
+    terminal_ui(api)
     # insert_event(api,'primary', '2022-9-29','2022-9-29','00:07:14','23:50:00','Mrs Smith 546 Fake St. Clayton VIC 3400 AUSTRALIA', 'test_reminder', 'bbbbalsss', ['loolipin0321@gmail.com'])
-    update_event(api,'jchu0057@student.monash.edu', 'bbbbalsss', '2022-9-29','2022-9-29', 'testPepega','00:08:14','23:55:00','online' , 'confirmed' , [])
+    # update_event(api,'jchu0057@student.monash.edu', 'bbbbalsss', '2022-9-29','2022-9-29', 'testPepega','00:08:14','23:55:00','online' , 'confirmed' , [])
     # export_event(api, '2022-9-21T00:00:10+08:00', '2022-9-23T00:00:10+08:00')
     # import_event(api)
     # user_interface(api, 2022, '2022-9-21T20:07:14+08:00', 10)
