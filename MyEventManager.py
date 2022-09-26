@@ -33,6 +33,77 @@ import json
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
+"""test suite 1"""
+def address_check(location):
+    """
+    This is to ensure that the address input is within the accepted time format of the US or Australian format
+    """
+    if location.upper() == 'ONLINE' or location == '':
+        return False
+    format = 0
+    for i in range(len(location)):
+        if format == 0:
+            if str.isdigit(location[i]):
+                format += 1
+        elif format == 1:
+            try:
+                if location[i].isupper() and location[i+1].isupper():
+                    format += 1
+            except:
+                raise ValueError("Incorrect Address Format")
+        elif format == 2:
+            if str.isdigit(location[i]):
+                format += 1
+    if format != 3:
+        raise ValueError("Incorrect Address Format")
+    return True
+
+
+def ensure_date_format(start_date, end_date = None):
+    """
+    This function is to make sure that the date format input is only in the 2 accepted formats
+    which are %d-%b-%y and %Y-%m-%d
+    """
+    try:
+        datetime.datetime.strptime(start_date, '%d-%b-%y')
+        start_date = datetime.datetime.strptime(start_date, '%d-%b-%y').strftime('%Y-%m-%d')
+        
+    except:
+        try:
+            datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y-%m-%d')
+            
+        except:
+            raise ValueError("Wrong Date Format")
+
+    try:
+        (datetime.datetime.strptime(end_date, '%d-%b-%y'))
+        end_date = datetime.datetime.strptime(end_date, '%d-%b-%y').strftime('%Y-%m-%d')
+    except:
+        try:
+            datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y-%m-%d')
+        except:
+            raise ValueError("Wrong End Date Format")
+    
+    if int(start_date.split("-")[0]) > 2050:
+        raise ValueError("Year can't be more than 2050")
+    if start_date > end_date:
+        raise ValueError("Start date must be smaller than end date")
+    
+    return start_date, end_date
+
+def ensure_time_format(time):
+    """
+    This is to ensure that the time format is within the accepted time format of %H:%M:%S
+    """
+    try:
+        time == datetime.datetime.strptime(time, '%H:%M:%S')
+    except:
+        raise ValueError("Incorrect Start Time Format")
+    return True
+
+""" test suite 2"""
 def get_calendar_api():
     """
     Get an object which allows you to consume the Google Calendar API.
@@ -74,7 +145,33 @@ def get_upcoming_events(api, starting_time, number_of_events):
                                       orderBy='startTime').execute()
     return events_result.get('items', [])
 
-# test insert()
+# function to check if the current event needed to be updated is valid today till 2050
+def check_date(startDate):
+    date = startDate.split("T")[0]
+    time = startDate.split("T")[1].split("+")[0]
+    ensure_time_format(time)
+    dateandtime = datetime.datetime.strptime(date + " " + time, "%Y-%m-%d %H:%M:%S")
+    upper_bound = datetime.datetime.strptime("2050-12-31 23:59:59", "%Y-%m-%d %H:%M:%S")
+    today_date =  datetime.datetime.now()
+    if dateandtime >= today_date and dateandtime <= upper_bound:
+        return True
+    else:
+        raise ValueError("Can only modify events that are present and max year 2050")
+
+def check_details(ownCalendarId, eventorgId):
+    if ownCalendarId == eventorgId:
+        return True
+    else:
+        raise ValueError("Only organiser of the event can manage the event details!")
+
+def check_emailFormat(email):
+    if email == "primary":
+        return True
+    if(re.fullmatch(regex, email)):
+        return True
+    else:
+        raise ValueError("Email format is incorrect.")
+
 def insert_event(api, calID, starting_date, ending_date, start_time, end_time, event_location, event_name, id, attendees = None):
     # checks the start end date format (yyyy-mm-dd || dd-MON-yy), id format, and time format (24hr)
     if (starting_date == '') or (ending_date == ''):
@@ -130,34 +227,6 @@ def insert_event(api, calID, starting_date, ending_date, start_time, end_time, e
 
     events_result = api.events().insert(calendarId=calID, body=eventbody, sendUpdates='all').execute()
     return events_result
-
-# function to check if the current event needed to be updated is valid today till 2050
-def check_date(startDate):
-    date = startDate.split("T")[0]
-    time = startDate.split("T")[1].split("+")[0]
-    ensure_time_format(time)
-    dateandtime = datetime.datetime.strptime(date + " " + time, "%Y-%m-%d %H:%M:%S")
-    upper_bound = datetime.datetime.strptime("2050-12-31 23:59:59", "%Y-%m-%d %H:%M:%S")
-    today_date =  datetime.datetime.now()
-    if dateandtime >= today_date and dateandtime <= upper_bound:
-        return True
-    else:
-        raise ValueError("Can only modify events that are present and max year 2050")
-
-def check_details(ownCalendarId, eventorgId):
-    if ownCalendarId == eventorgId:
-        return True
-    else:
-        raise ValueError("Only organiser of the event can manage the event details!")
-
-def check_emailFormat(email):
-    if email == "primary":
-        return True
-    if(re.fullmatch(regex, email)):
-        return True
-    else:
-        raise ValueError("Email format is incorrect.")
-    
 
 def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStartTime, newEndTime, newLocation, newStatus, newAttendees):
     # check if the user requesting to modify the event is the organizer of the event
@@ -233,8 +302,6 @@ def update_event(api, ownId, eventId, newStartDate, newEndDate, newName, newStar
     event = api.events().update(calendarId=ownId, eventId=event['id'], body=eventbody).execute()
     return event
 
-
-
 # only works with personal email
 def move_event(api, originalId, newId, eventId):
     # the authentication popped, choose the new calendar ID you wish to move to, NOT YOUR OWN CALENDAR
@@ -250,7 +317,7 @@ def delete_events(api, calId, Id):
         api.events().delete(calendarId=calId, eventId=Id).execute()
     return
 
-
+""" test suite 3"""
 def check_attendee_limit(attendees):
     """
     This function is to check whether the amount of attendees are within the accepted limits.
@@ -259,75 +326,6 @@ def check_attendee_limit(attendees):
         return attendees
     else:
         raise ValueError("There are too many attendees")
-
-def ensure_date_format(start_date, end_date = None):
-    """
-    This function is to make sure that the date format input is only in the 2 accepted formats
-    which are %d-%b-%y and %Y-%m-%d
-    """
-    try:
-        datetime.datetime.strptime(start_date, '%d-%b-%y')
-        start_date = datetime.datetime.strptime(start_date, '%d-%b-%y').strftime('%Y-%m-%d')
-        
-    except:
-        try:
-            datetime.datetime.strptime(start_date, '%Y-%m-%d')
-            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y-%m-%d')
-            
-        except:
-            raise ValueError("Wrong Date Format")
-
-    try:
-        (datetime.datetime.strptime(end_date, '%d-%b-%y'))
-        end_date = datetime.datetime.strptime(end_date, '%d-%b-%y').strftime('%Y-%m-%d')
-    except:
-        try:
-            datetime.datetime.strptime(end_date, '%Y-%m-%d')
-            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y-%m-%d')
-        except:
-            raise ValueError("Wrong End Date Format")
-    
-    if int(start_date.split("-")[0]) > 2050:
-        raise ValueError("Year can't be more than 2050")
-    if start_date > end_date:
-        raise ValueError("Start date must be smaller than end date")
-    
-    return start_date, end_date
-
-def ensure_time_format(time):
-    """
-    This is to ensure that the time format is within the accepted time format of %H:%M:%S
-    """
-    try:
-        time == datetime.datetime.strptime(time, '%H:%M:%S')
-    except:
-        raise ValueError("Incorrect Start Time Format")
-    return True
-
-
-def address_check(location):
-    """
-    This is to ensure that the address input is within the accepted time format of the US or Australian format
-    """
-    if location.upper() == 'ONLINE' or location == '':
-        return False
-    format = 0
-    for i in range(len(location)):
-        if format == 0:
-            if str.isdigit(location[i]):
-                format += 1
-        elif format == 1:
-            try:
-                if location[i].isupper() and location[i+1].isupper():
-                    format += 1
-            except:
-                raise ValueError("Incorrect Address Format")
-        elif format == 2:
-            if str.isdigit(location[i]):
-                format += 1
-    if format != 3:
-        raise ValueError("Incorrect Address Format")
-    return True
 
 def create_reader(api, calendarId, user_email):
     """
@@ -338,13 +336,7 @@ def create_reader(api, calendarId, user_email):
         "scope": {
         "type": "user",
         "value": user_email
-        },
-        "reminders": {
-                    "useDefault": 'False',
-                    "overrides": [
-                        {'method': 'popup', 'minutes': 20}
-                    ]
-                }
+        }
     }
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
@@ -378,6 +370,7 @@ def create_owner(api, calendarId, user_email):
     created_rule = api.acl().insert(calendarId=calendarId, body=rolebody).execute()
     return created_rule
 
+""" test suite 5 """
 def search_event(api, query):
     """
     This function allows the user to search for events
@@ -413,33 +406,6 @@ def print_events(api, start_time, end_time):
         start = event['start'].get('dateTime', event['start'].get('date'))
         print(start, event['summary'])
     
-def export_event(api, Id):
-    """
-    This is to export the event to a json format that allows it to be imported later on
-    """
-    event = api.events().get(calendarId='primary', eventId=Id).execute()
-    with open("output.json", "w") as outfile:
-        json.dump(event, outfile, indent = 4)
-
-def import_event(api, calId):
-    """
-    This is to import the event to a json format
-    """
-    f = open('output.json')
-    data = json.load(f)
-    calID = calId
-    startDateTime = data['start']['dateTime']
-    endDateTime = data['end']['dateTime']
-    event_location = data['location']
-    event_name = data['summary']
-    id = data['id']
-    startDate = startDateTime.split("T")
-    endDate = endDateTime.split("T")
-    startTime = startDate[1].split("+")
-    endTime = endDate[1].split("+")
-    insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
-
-
 def terminal_ui (api): #pragma: no cover
     """
     This is the user interface to show how the navigation works
@@ -546,7 +512,32 @@ Input: """)
                     end_time = year + "-" + '12' + "-" + str(monthrange(int(year), 12)[1]) + 'T23:59:00+08:00'
                     print_events(api, start_time, end_time)
     return
+""" test suite 6 """
+def export_event(api, Id):
+    """
+    This is to export the event to a json format that allows it to be imported later on
+    """
+    event = api.events().get(calendarId='primary', eventId=Id).execute()
+    with open("output.json", "w") as outfile:
+        json.dump(event, outfile, indent = 4)
 
+def import_event(api, calId):
+    """
+    This is to import the event to a json format
+    """
+    f = open('output.json')
+    data = json.load(f)
+    calID = calId
+    startDateTime = data['start']['dateTime']
+    endDateTime = data['end']['dateTime']
+    event_location = data['location']
+    event_name = data['summary']
+    id = data['id']
+    startDate = startDateTime.split("T")
+    endDate = endDateTime.split("T")
+    startTime = startDate[1].split("+")
+    endTime = endDate[1].split("+")
+    insert_event(api, calID, startDate[0], endDate[0], startTime[0], endTime[0], event_location, event_name, id)
 
 def main():
 #     # address = """Mrs Smith 123 Fake St. Clayton VIC 3400 AUSTRALIA"""
