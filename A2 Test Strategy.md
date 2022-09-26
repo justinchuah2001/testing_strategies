@@ -73,118 +73,67 @@ Moving on, in the function used to ensure the valid date format and time format,
 ### Testing
 
 **Test 1**
-**Ensure Valid Address Format Function**\
-**Description:**\
-This test suite is to test the function that checks the address to make sure that it is in the correct format.\
 
-**Provided Input with Expected and Actual Output.**\
+**Ensure Valid Address Format Function**
+
+**Description:**
+
+This test suite is to test the function that checks the address to make sure that it is in the correct format.
+
+**Provided Input with Expected and Actual Output.**
 ***Test Frame 1***
 
-Test Case 1: 
-Input: 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA' \
-Expected Output: True \
-Actual Output: True
 
-Test Case 2:
-Input: 'Mr Morrison 11 Banks Av WAGGA WAGGA WEST VIRGINIA 2650 US'\
-Expected Output: True\
-Actual Output: True
-
-Test Case 3:
-Input: ''\
-Expected Output: False\
-Actual Output: False
-
-Test Case 4:
-Input: 'online;\
-Expected Output: False\
-Actual Output: False
-
-Test Case 5:
-Input: '52, jalan 1234A, KL'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
-
-Test Case 6:
-Input: '52KL'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
-
-Test Case 7:
-Input: 'Mrs Smith 546 Fake St. Clayton 3400 A'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
+| Test Case No | Input | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA'  | True | True |
+| 2 | 'Mr Morrison 11 Banks Av WAGGA WAGGA WEST VIRGINIA 2650 US' | True | True |
+| 3 | '' | False | False |
+| 4 | 'online' | False | False |
+| 5 | '52, jalan 1234A, KL' | ValueError() | ValueError() |
+| 6 | '52KL' | ValueError() | ValueError() |
+| 7 | 'Mrs Smith 546 Fake St. Clayton 3400 A' | ValueError() | ValueError() |
 
 **Test 2**
-**Ensure Valid Date Format Function**\
-**Description:**\
-This test suite is to test the function that checks the date to make sure that it is in the correct format.\
 
-**Provided Input with Expected and Actual Output.**\
+**Ensure Valid Date Format Function**
+
+**Description:**
+
+This test suite is to test the function that checks the date to make sure that it is in the correct format.
+
+**Provided Input with Expected and Actual Output.**
+
 ***Test Frame 1***
 
-Test Case 1:
-Input: starting_date = '2022-8-4' | ending_date = '2022-9-4'\
-Expected Output: True\
-Actual Output: True\
-
-Test Case 2:
-Input: starting_date = '4-JAN-21' | ending_date = '4-OCT-22'\
-Expected Output: True\
-Actual Output: True
-
-Test Case 3:
-Input: starting_date = '2022-9-4' | ending_date = '2022-8-4'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
-
-Test Case 4:
-Input: starting_date = '2022-9-4' | ending_date = '22-8-4'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
-
-Test Case 5:
-Input: starting_date = '2051-9-4' | ending_date = '2052-8-4'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
-
-Test Case 6:
-Input: starting_date = '22-9-4' | ending_date = '22-12-4'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
-
-Test Case 7:
-Input: starting_date = '2-9-19' | ending_date = '13-12-21'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
+| Test Case No | Input (starting_date, ending_date) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | ('2022-8-4', '2022-9-4')  | True | True |
+| 2 | ('4-JAN-21', '4-OCT-22') | True | True |
+| 3 | ('2022-9-4', '2022-8-4') | ValueError() | ValueError() |
+| 4 | ('2022-9-4', '22-8-4') | ValueError() | ValueError() |
+| 5 | ('2051-9-4', '2052-8-4') | ValueError() | ValueError() |
+| 6 | ('22-9-4', '22-12-4') | ValueError() | ValueError() |
+| 7 | ('2-9-19', '13-12-21') | ValueError() | ValueError() |
 
 **Test 3**
-**Ensure Time Format Function**\
-**Description:**\
+
+**Ensure Time Format Function**
+
+**Description:**
+
 This test suite is to test the function that checks the time to make sure that it is in the correct format.\
 
-**Provided Input with Expected and Actual Output.**\
+**Provided Input with Expected and Actual Output.**
+
 ***Test Frame 1***
 
-Test Case 1:
-Input: starttime = '9:6:23' \
-Expected Output: True\
-Actual Output: True
-
-Test Case 2:
-Input: endtime = '15:55:3'\
-Expected Output: True\
-Actual Output: True
-
-Test Case 3:
-Input: endtime = '23:66:8'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
-
-Test Case 4:
-Input: endtime = '25:12:69'\
-Expected Output: ValueError()\
-Actual Output: ValueError()
+| Test Case No | Input | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | '9:6:23'  | True | True |
+| 2 | '15:55:3' | True | True |
+| 3 | '23:66:8' | ValueError() | ValueError() |
+| 4 | '25:12:69' | ValueError() | ValueError() |
 
 ## Test Suite 2: Creation of Events Organiser
 
@@ -208,9 +157,29 @@ First, check_emailFormat is tested with branch coverage and condition coverage. 
 
 Second, check_date function is tested with branch coverage, condition coverage and statement coverage. This allows us to cover all possible outcomes, as this function also contains ensure_time_format function, utilising what we have tested in test suite 1.
 
+Third, check_details function is tested with branch coverage and condition coverage. This allows us to cover all possible outcomes. 
+
 ### Testing
 
-**Test 1: Check Date Function**
+**Test 1: Check Email Function**
+
+**Description:**
+
+This test frame is to test check_emailFormat function, a function that checks if the email format is correct. 
+
+**Provided Input with Expected and Actual Output.**
+
+***Test Frame 1***
+
+| Test Case No | Input | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | "kekw@gmail.com" | True | True |
+| 2 | "primary" | ValueError() | ValueError() |
+| 3 | "PEPEGA" | ValueError() | ValueError() |
+| 4 | "PEPEGA@hjello" | ValueError() | ValueError() |
+| 5 | "PEPEGA.weeeeeeeeeeeeee" | ValueError() | ValueError() |
+
+**Test 2: Check Date Function**
 
 **Description:**
 
@@ -220,11 +189,26 @@ This test frame is to test check_date function, a function that allows events on
 
 ***Test Frame 1***
 
-| Test Case Input | Expected Output | Actual Output |
-| --- | --- | --- |
-| "2024-09-22T00:00:00+08:00" | True | True |
-| "2020-09-22T00:00:00+08:00" | ValueError() | ValueError() |
-| "2051-01-01T00:00:00+08:00" | ValueError() | ValueError() |
+| Test Case No | Input | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | "2024-09-22T00:00:00+08:00" | True | True |
+| 2 | "2020-09-22T00:00:00+08:00" | ValueError() | ValueError() |
+| 3 | "2051-01-01T00:00:00+08:00" | ValueError() | ValueError() |
+
+**Test 3: Check Details Function**
+
+**Description:**
+
+This test frame is to test check_details function, a function that allows event to be modified if the user is the organizer of the event.
+
+**Provided Input with Expected and Actual Output.**
+
+***Test Frame 1***
+
+| Test Case No | Input (event organizer email, modifier email) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | ("113@gmail.com", "113@gmail.com") | True | True |
+| 2 | ("113@gmail.com","223@gmail.com") | ValueError() | ValueError() |
 
 ## Test Suite 3: Creation of Attendees
 
