@@ -377,7 +377,7 @@ Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
 
-We tested the import and export functions through mocking which is used to simulate the google calendar api.
+We tested the import and export functions through mocking which is used to simulate the google calendar api. By mocking we can simulate the Google Calendar APi and test its functionalities.
 
 ### Testing ###
 
