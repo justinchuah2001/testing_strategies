@@ -44,10 +44,11 @@ For spec 4, reminders are part of the event, so a piece of code for sending even
 ## Spec 5: Navigation
 
 For spec 5,  the application should provide a navigation mechanism, which user can navigate through days, months and years to view the details of events. To achieve this, a function **terminal\_ui** is created for users to look through the events in the calendar and also be able to search for an event by using event name, date or keywords of the event.
+**terminal\_ui** is done by having the users choose their desired viewing format of the calendar which is either by Year, Month or Day, then the user can increase/decrease their desired view by one change the view. To allow the user to search for events, a function called **search\_event** is created which grabs all the events with the event name/keywords searched.
 
 ## Spec 6: Import and Export
 
-For spec 6, the application should support importing and exporting of events in JSON format and should compatible with Windows, Ubuntu and OSX operating systems, so function **export\_event** and **import\_event** is used to importing and exporting in this application.
+For spec 6, the application should support importing and exporting of events in JSON format and should compatible with Windows, Ubuntu and OSX operating systems, so function **export\_event** and **import\_event** is used to importing and exporting in this application. Export event is done by having the application to search for a specific event using its event id, then it will write it onto a json file. Import event is done by reading the json file and extracting the required details to insert the event in the calendar.
 
 # Test Suites:
 
@@ -287,7 +288,7 @@ This test suite is to test the function that checks the number of attendees to m
 
 ***Test Frame 1***
 
-| Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
+| Test Case No | Input | Expected Output | Actual Output |
 | --- | --- | --- | --- |
 | 1 | attendees= ['john@gmail.com', 'hi@gmail.com'] = "2022-09-25" | True | True |
 | 2 | attendees= ['john@gmail.com', 'hi@gmail.com', '1@gmail.com', '2@gmail.com', '3@gmail.com', '4@gmail.com', '5@gmail,com', '6@gmail.com', '7@gmail.com', '8@gmail.com', '9@gmail.com', '10@gmail.com', '13@gmail.com', '14@gmail.com', '15@gmail.com', '16@gmail.com', '17@gmail.com', '18@gmail.com', '19@gmail.com', '20@gmail.com', '12@gmail.com', '21@gmail.com' ] | ValueError() | ValueError() |
@@ -324,33 +325,86 @@ Test suite 4 is created to test whether the attendees can reveive the reminders 
 
 ***Test Frame 1***
 
-Input: 
-'"2022-09-25", "2022-09-26", "20:06:14", "20:06:14", '753951', 'PEPEGA', "123456@gmail.com", "23456@gmail.com", 30'
-Expected output:
-'"2022-09-25", "2022-09-26", "20:06:14", "20:06:14", '753951', 'PEPEGA', "123456@gmail.com", "23456@gmail.com", 30'
-Actual output:
-'"2022-09-25", "2022-09-26", "20:06:14", "20:06:14", '753951', 'PEPEGA', "123456@gmail.com", "23456@gmail.com", 30'
+| Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId =
+"123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId = "123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId = "123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 |
 
 ## Test Suite 5: Testing of Navigation
 
 ***Description:***
+As the app has a user interface to show navigation, we couldn't really test that, instead the functionality within the user interface search\_event is tested through mocking
 
 ***Testing method:*** 
+
+Mock Testing, Condition Coverage, Statement Coverage
 
 ***Tester:***
 
 Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
+
+By mocking the api, we can test the search function to ensure that it is called and the query result is in fact the same as the one searched.
+In this test suite, we have made use of condition coverage and statement coverage to ensure that the function is tested fullly by covering all the possible outcomes. 
+
+**Test 1: Search Event Function**
+
+**Description:**
+
+An event is searched through mocking which checks if the input event title is present. 
+
+***Test Frame 1***
+
+| Test Case No | Input (api, query) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | (mock_api, "parallel") | True (q == query) | True (q == query) |
+| 2 | (mock_api, "online") | True (q == query) | True (q == query) |
+| 3 | (mock_api, "") | True (q == query) | True (kwargs == []) |
 
 ## Test Suite 6: Testing the import and export of event
 
 ***Description:***
 
+For this test suite we had to test the import and export functionality of the appllication on different platforms of Windows, Ubuntu and OSX operating systems in JSON format
+
 ***Testing method:*** 
+
+Mock Testing
 
 ***Tester:***
 
 Jun Jie Chua, Guoyueyang Huang, Li Pin Loo
 
 ***Rationale:***
+
+We tested the import and export functions through mocking which is used to simulate the google calendar api.
+
+### Testing ###
+
+**Test 1: Import Event Function**
+
+**Description:**
+
+An event is imported through mocking
+
+***Test Frame 1***
+
+| Test Case No | Input (api, calendarId) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | (mock_api, "123@gmail.com") | True (call_count == 0) | True (call_count == 0) |
+
+**Test 2: Export Event Function**
+
+**Description:**
+
+An event is exported through mocking
+
+***Test Frame 1***
+
+| Test Case No | Input (api, starting_time, ending_time) | Expected Output | Actual Output |
+| --- | --- | --- | --- |
+| 1 | (mock_api, "2022-9-20T00:00:10+8:00", "2022-9-20T00:00:10+8:00") | Event is exported | TypeError() |
+
+
+
