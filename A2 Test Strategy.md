@@ -221,6 +221,7 @@ This test frame is to test check_date function, a function that allows events on
 ***Test Frame 1***
 
 | Test Case Input | Expected Output | Actual Output |
+| --- | --- | --- |
 | "2024-09-22T00:00:00+08:00" | True | True |
 | "2020-09-22T00:00:00+08:00" | ValueError() | ValueError() |
 | "2051-01-01T00:00:00+08:00" | ValueError() | ValueError() |
