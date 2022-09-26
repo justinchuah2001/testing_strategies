@@ -142,27 +142,13 @@ class MyEventManagerTest(unittest.TestCase):
         self.assertEqual(mock_api.events.return_value.get.return_value.execute.return_value.get.call_count,0)
 
     def test_move_event(self):
-        # insert an event before updating the event
-        start_date = "2022-09-25"
-        end_date = "2022-09-26"
-        start_time = "20:06:14"
-        end_time = "20:06:14"
-        id = '753951'
-        event_name = 'PEPEGA'
-        location = ""
-        calID = "123456@gmail.com"
-        attendees = ["23456@gmail.com"]
-
+        Id = '753951'
         mock_api = MagicMock()
-        events = MyEventManager.insert_event(mock_api, calID, start_date, end_date, start_time, end_time, location, event_name ,id, attendees)
-        
         # move the eventmock_api = MagicMock()
         calId = "123456789@gmail.com"
         newCalID = "23456@gmail.com"
-        event = MyEventManager.move_event(mock_api,calID,newCalID,id)
+        event = MyEventManager.move_event(mock_api,calId,newCalID,Id)
         self.assertEqual(mock_api.events.return_value.move.return_value.execute.return_value.get.call_count, 0)
-
-    
 
     def test_create_owner(self):
         mock_api = MagicMock()
