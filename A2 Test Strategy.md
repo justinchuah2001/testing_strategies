@@ -72,11 +72,11 @@ Moving on, in the function used to ensure the valid date format and time format,
 **Ensure Valid Address Format Function**
 **Description**
 This test suite is to test the function that checks the address to make sure that it is in the correct format.
-**Provided Input with Expected and Actual Output.**
+**Provided Input with Expected and Actual Output.**\
 ***Test Frame 1***
-Test Case 1: \n
-Input: 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA' \n
-Expected Output: True \n
+Test Case 1: 
+Input: 'Mrs Smith, 546 Fake St., Clayton VIC 3400, AUSTRALIA' 
+Expected Output: True 
 Actual Output: True
 
 Test Case 2:
