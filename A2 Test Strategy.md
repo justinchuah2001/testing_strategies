@@ -281,7 +281,7 @@ For this test suite, we have chosen to test it in a form of branch coverage. Fir
 
 **Description:**
 
-This test suite is to test the function that checks the number of attendees to make sure that it is in the correct amount.
+This test suite is to test the function that checks the number of attendees to make sure that it is in the correct amount. 
 
 **Provided Input with Expected and Actual Output.**
 
