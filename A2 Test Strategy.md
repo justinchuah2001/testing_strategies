@@ -1,4 +1,4 @@
-﻿# **FIT2107 Whitebox Testing**
+# **FIT2107 Whitebox Testing**
 
 **Team: 06**
 
@@ -327,8 +327,7 @@ Test suite 4 is created to test whether the attendees can reveive the reminders 
 
 | Test Case No | Input (multiple inputs) | Expected Output | Actual Output |
 | --- | --- | --- | --- |
-| 1 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId =
-"123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId = "123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId = "123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 |
+| 1 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId = "123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId = "123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 | start_date = "2022-09-25" <br> end_date"2022-09-26" <br> start_time = "20:06:14" <br> end_time = "20:06:14" <br> eventId = '753951' <br> eventName = 'PEPEGA' <br> calId = "123456@gmail.com" <br> attendees = "23456@gmail.com" <br> reminder = 30 |
 
 ## Test Suite 5: Testing of Navigation
 
